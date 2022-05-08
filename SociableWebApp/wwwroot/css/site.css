@@ -1,5 +1,5 @@
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
@@ -11,8 +11,47 @@ html {
 html {
   position: relative;
   min-height: 100%;
+
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
+    background-color: lightseagreen;
+}
+
+p{
+    color:black;
+}
+.heading {
+    font-family: 'Oleo Script Swash Caps', cursive;
+    font-size: 110px;
+    color: darkgray
+}
+
+card{
+    background-color: white;
+}
+label{
+    opacity: 0.7;
+}
+
+.field-validation-error {
+    color: red;
+    font-size: smaller;
+}
+
+*:focus {
+    outline: none;
+}
+/*<--- Hide arrows from number input --->*/
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
 }

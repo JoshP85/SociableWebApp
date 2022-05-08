@@ -1,38 +1,47 @@
 ﻿@model SociableWebApp.Models.AppUser
 @{
-    ViewData["Title"] = "Sociable";
+    ViewData["Title"] = "Register";
 }
+
+
 <div class="container">
     <div class="d-flex justify-content-center">
         <div class="col-sm-9 col-md-7 col-lg-6 col-xl-5 mx-auto card border-0 shadow rounded-3 mt-5">
             <div class="m-4">
-                <form asp-controller="Home" asp-action="Index">
+                <form asp-controller="Home" asp-action="Register">
                     <div class="text-center">
                         <h1 class="heading d-flex justify-content-center">sociable</h1>
-                        <p class="m-0 mt-2">Sign in with an existing account </p>
-                        <p>or create a new account.</p>
                     </div>
-
+                    <div asp-validation-summary="ModelOnly"></div>
                     <div class="form-floating mb-3">
                         <input asp-for="Email" type="email" class="form-control" id="emailInput" placeholder="Email">
                         <label for="emailInput">Email</label>
                         <span asp-validation-for="Email"></span>
                     </div>
                     <div class="form-floating mb-3">
+                        <input asp-for="Name" type="text" class="form-control" id="nameInput" placeholder="Name">
+                        <label for="nameInput">Name</label>
+                        <span asp-validation-for="Name"></span>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input asp-for="PhoneNumber" type="number" class="form-control" id="phoneInput" placeholder="Phone">
+                        <label for="phoneInput">Phone</label>
+                        <span asp-validation-for="PhoneNumber"></span>
+                    </div>
+                    <div class="form-floating mb-3">
                         <input asp-for="Password" type="password" class="form-control" id="passwordInput" placeholder="Password">
                         <label for="passwordInput">Password</label>
                         <span asp-validation-for="Password"></span>
                     </div>
-                    @Html.ValidationMessage("LoginFailed", new {@class = "text-danger"})
+                    @Html.ValidationMessage("RegisterFailed", new {@class = "text-danger"})
                     <div class="w-75 m-auto">
                         <div class="d-grid mt-4">
-                            <button class="btn btn-primary text-uppercase fw-bold" id="button" type="submit">Sign in</button>
-                            <a class="text-center mt-1" style="text-decoration:none">Forgotten password?</a>
+                            <button class="btn btn-primary text-uppercase fw-bold" type="submit">Create Account</button>
                         </div>
                     </div>
                     <hr />
                     <div class="text-center">
-                        <p>Don't have an account? <b><a class="text-center mt-1" asp-controller="Home" asp-action="Register" style="text-decoration:none">Sign up</a></b></p>
+                        <p>Have an account? <b><a class="text-center mt-1" asp-controller="Home" asp-action="Index" style="text-decoration:none">Sign in</a></b></p>
                     </div>
                 </form>
             </div>
@@ -41,20 +50,24 @@
 </div>
 @section scripts
 {
-    <partial name="_LoginValidationScriptsPartial" />
+    <partial name="_ValidationScriptsPartial" />
 }
 <script>
     // Disable sign in button if fields are empty.
     const input1 = document.querySelector("#emailInput");
-    const input2 = document.querySelector("#passwordInput");
+    const input2 = document.querySelector("#nameInput");
+    const input3 = document.querySelector("#phoneInput");
+    const input4 = document.querySelector("#passwordInput");
     const btn = document.querySelector(".btn");
     btn.setAttribute("disabled","disabled");
 
     input1.addEventListener("input", validate);
     input2.addEventListener("input", validate);
+    input3.addEventListener("input", validate);
+    input4.addEventListener("input", validate);
 
     function validate(){
-      if(input1.value === "" || input2.value === ""){
+      if(input1.value === "" || input2.value === "" || input3.value === "" || input4.value === ""){
         btn.setAttribute("disabled","disabled");
       } else {
         btn.removeAttribute("disabled");

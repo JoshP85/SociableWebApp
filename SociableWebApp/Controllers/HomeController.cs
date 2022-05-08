@@ -18,7 +18,13 @@ namespace SociableWebApp.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
+        public IActionResult Register()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Register([Bind("Email, FirstName, LastName, PhoneNumber, Location, Password")] AppUser newUser)
         {
             return View();
         }
