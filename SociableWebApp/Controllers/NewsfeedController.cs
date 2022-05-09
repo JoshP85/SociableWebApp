@@ -1,18 +1,43 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2.DataModel;
+using Microsoft.AspNetCore.Mvc;
+using SociableWebApp.Models;
+using SociableWebApp.Session;
 
 namespace SociableWebApp.Controllers
 {
+    [RequireSession]
     public class NewsfeedController : Controller
     {
-        // GET: NewsfeedController
+
+        private string UserEmail => HttpContext.Session.GetString(nameof(AppUser.Email));
+        private readonly IDynamoDBContext dynamoDBContext;
+        private readonly IAmazonDynamoDB client;
+
+        public NewsfeedController(IDynamoDBContext dynamoDBContext, IAmazonDynamoDB client)
+        {
+            this.dynamoDBContext = dynamoDBContext;
+            this.client = client;
+        }
         public ActionResult NewsFeed()
         {
+            AppUser appUser = AppUser.GetAppUser(dynamoDBContext, UserEmail);
+            ViewBag.AppUser = appUser;
+
             return View();
+        }
+
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+
+            return RedirectToAction("Index", "Home");
         }
 
         // GET: NewsfeedController/Details/5
         public ActionResult Details(int id)
         {
+
             return View();
         }
 

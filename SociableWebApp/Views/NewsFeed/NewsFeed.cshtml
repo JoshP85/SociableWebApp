@@ -1,1 +1,6 @@
-﻿you are here
+﻿@{
+    var appUser = ViewBag.AppUser;
+}
+
+you are here @appUser.Name
+<a class="btn btn-primary btn-login text-uppercase fw-bold" asp-controller="Newsfeed" asp-action="Logout">Logout</a>

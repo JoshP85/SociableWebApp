@@ -8,7 +8,7 @@ namespace SociableWebApp.Data
     {
         public static async Task CreateDatabaseAsync(IAmazonDynamoDB client, IAmazonS3 clientS3)
         {
-            string tableName = "users";
+            string tableName = "AppUsers";
 
             try
             {
@@ -19,7 +19,7 @@ namespace SociableWebApp.Data
                               {
                                   new AttributeDefinition
                                   {
-                                      AttributeName = "email",
+                                      AttributeName = "Email",
                                       AttributeType = "S"
                                   },
                               },
@@ -27,7 +27,7 @@ namespace SociableWebApp.Data
                               {
                                   new KeySchemaElement
                                   {
-                                      AttributeName = "email",
+                                      AttributeName = "Email",
                                       KeyType = "HASH"
                                   },
                               },

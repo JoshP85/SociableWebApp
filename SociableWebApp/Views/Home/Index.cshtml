@@ -23,7 +23,9 @@
                         <label for="passwordInput">Password</label>
                         <span asp-validation-for="Password"></span>
                     </div>
-                    @Html.ValidationMessage("LoginFailed", new {@class = "text-danger"})
+                    <div class="text-center">
+                        @Html.ValidationMessage("LoginFailed", new {@class = "text-danger"})
+                    </div>
                     <div class="w-75 m-auto">
                         <div class="d-grid mt-4">
                             <button class="btn btn-primary text-uppercase fw-bold" id="button" type="submit" asp-controller="Home" asp-action="Index">Sign in</button>

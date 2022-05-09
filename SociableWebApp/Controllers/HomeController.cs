@@ -26,14 +26,28 @@ namespace SociableWebApp.Controllers
         public async Task<IActionResult> IndexAsync()
         {
             await Database.CreateDatabaseAsync(client, clientS3);
-            //await Seed.SeedDate(client, clientS3);
+
             return View();
         }
 
         [HttpPost]
-        public IActionResult Index([Bind("Email, Password")] AppUser appUser)
+        public IActionResult Index(string email, string password)
         {
-            return RedirectToAction("NewsFeed", "NewsFeed");
+            if (email is not null)
+            {
+                AppUser user = AppUser.GetAppUser(dynamoDBContext, email);
+                if (user is not null)
+                {
+                    if (password == user.Password)
+                    {
+                        HttpContext.Session.SetString(nameof(AppUser.Email), user.Email);
+                        return RedirectToAction("NewsFeed", "NewsFeed");
+                    }
+                }
+            }
+
+            ModelState.AddModelError("LoginFailed", "Email or Password is incorrect.");
+            return View();
         }
 
         public IActionResult Register()

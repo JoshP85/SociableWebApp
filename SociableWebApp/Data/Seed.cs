@@ -27,17 +27,17 @@ namespace SociableWebApp.Data
 
                 var requestSeed = new PutItemRequest
                 {
-                    TableName = "users",
+                    TableName = "AppUsers",
                     Item = new Dictionary<string, AttributeValue>()
                     {
-                        { "appUserID", new AttributeValue {S = item.id } },
-                        { "email", new AttributeValue {S = item.email } },
-                        { "password", new AttributeValue {S = item.password } },
-                        { "name", new AttributeValue {S = item.name } },
-                        { "phone", new AttributeValue {S = item.phone } },
-                        { "city", new AttributeValue {S = item.city}},
-                        { "country", new AttributeValue {S = item.country}},
-                        { "accCreatedDate", new AttributeValue {S = item.accCreatedDate}},
+                        { "AppUserID", new AttributeValue {S = item.id } },
+                        { "Email", new AttributeValue {S = item.email } },
+                        { "Password", new AttributeValue {S = item.password } },
+                        { "Name", new AttributeValue {S = item.name } },
+                        { "PhoneNumber", new AttributeValue {S = item.phone } },
+                        { "City", new AttributeValue {S = item.city}},
+                        { "Country", new AttributeValue {S = item.country}},
+                        { "AccCreatedDate", new AttributeValue {S = item.accCreatedDate}},
                         //{ "accUpdatedDate", new AttributeValue {S = item.accUpdatedDate}},
                     }
                 };

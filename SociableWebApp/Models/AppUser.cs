@@ -3,11 +3,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SociableWebApp.Models
 {
+    [DynamoDBTable("AppUsers")]
     public class AppUser
     {
         public AppUser()
         {
-            AccCreatedDate = DateTime.Now;
+            AccCreatedDate = DateTime.Now.ToString();
             AppUserID = new Guid().ToString();
         }
 
@@ -40,10 +41,18 @@ namespace SociableWebApp.Models
         public string? ProfileImgUrl { get; set; }
 
         [DynamoDBProperty]
-        public DateTime AccCreatedDate { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
+        public string AccCreatedDate { get; set; }
 
         [DynamoDBProperty]
         public DateTime? AccUpdatedDate { get; set; }
 
+
+        public static AppUser GetAppUser(IDynamoDBContext dynamoDBContext, string email)
+        {
+            return dynamoDBContext.LoadAsync<AppUser>(email).Result;
+        }
     }
+
+
 }
