@@ -63,7 +63,7 @@ namespace SociableWebApp.Controllers
             {
                 return RedirectToAction("Index", "Home");
             }
-            ModelState.AddModelError("RegisterFailed", $"An account registered with the email {newUser.Email} already exists.");
+            ModelState.AddModelError("RegisterFailed", $"{newUser.Email} is already registered with an account.");
             return View();
         }
 
