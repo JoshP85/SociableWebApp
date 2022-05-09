@@ -397,3 +397,5 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 
+/SociableWebApp/private-key.txt
+/SociableWebApp/access-key.txt
