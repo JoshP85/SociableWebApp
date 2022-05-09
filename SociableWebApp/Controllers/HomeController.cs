@@ -25,8 +25,8 @@ namespace SociableWebApp.Controllers
 
         public async Task<IActionResult> IndexAsync()
         {
-            await Database.CreateDatabaseAsync(client);
-            await Seed.SeedDate(client, clientS3);
+            await Database.CreateDatabaseAsync(client, clientS3);
+            //await Seed.SeedDate(client, clientS3);
             return View();
         }
 

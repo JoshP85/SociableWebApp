@@ -1,11 +1,12 @@
 ﻿using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
+using Amazon.S3;
 
 namespace SociableWebApp.Data
 {
     public class Database
     {
-        public static async Task CreateDatabaseAsync(IAmazonDynamoDB client)
+        public static async Task CreateDatabaseAsync(IAmazonDynamoDB client, IAmazonS3 clientS3)
         {
             string tableName = "users";
 
@@ -64,7 +65,7 @@ namespace SociableWebApp.Data
             {
                 return;
             }
-            //await Seed.SeedDate(client, clientS3);
+            await Seed.SeedDate(client, clientS3);
         }
     }
 }
