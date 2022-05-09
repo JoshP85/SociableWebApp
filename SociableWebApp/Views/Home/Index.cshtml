@@ -26,7 +26,7 @@
                     @Html.ValidationMessage("LoginFailed", new {@class = "text-danger"})
                     <div class="w-75 m-auto">
                         <div class="d-grid mt-4">
-                            <button class="btn btn-primary text-uppercase fw-bold" id="button" type="submit">Sign in</button>
+                            <button class="btn btn-primary text-uppercase fw-bold" id="button" type="submit" asp-controller="Home" asp-action="Index">Sign in</button>
                             <a class="text-center mt-1" style="text-decoration:none">Forgotten password?</a>
                         </div>
                     </div>
