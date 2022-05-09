@@ -33,7 +33,10 @@
                         <label for="passwordInput">Password</label>
                         <span asp-validation-for="Password"></span>
                     </div>
-                    @Html.ValidationMessage("RegisterFailed", new {@class = "text-danger"})
+                    <div class="text-center">
+                        @Html.ValidationMessage("RegisterFailed", new {@class = "text-danger"})
+                    </div>
+
                     <div class="w-75 m-auto">
                         <div class="d-grid mt-4">
                             <button class="btn btn-primary text-uppercase fw-bold" type="submit">Create Account</button>
