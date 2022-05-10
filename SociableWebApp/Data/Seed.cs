@@ -38,7 +38,7 @@ namespace SociableWebApp.Data
                         { "City", new AttributeValue {S = item.city}},
                         { "Country", new AttributeValue {S = item.country}},
                         { "AccCreatedDate", new AttributeValue {S = item.accCreatedDate}},
-                        //{ "accUpdatedDate", new AttributeValue {S = item.accUpdatedDate}},
+                        { "accUpdatedDate", new AttributeValue {S = item.accUpdatedDate}},
                     }
                 };
                 await client.PutItemAsync(requestSeed);

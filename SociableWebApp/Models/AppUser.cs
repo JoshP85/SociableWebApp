@@ -45,7 +45,10 @@ namespace SociableWebApp.Models
         public string AccCreatedDate { get; set; }
 
         [DynamoDBProperty]
-        public DateTime? AccUpdatedDate { get; set; }
+        public string? AccUpdatedDate { get; set; }
+
+        [DynamoDBProperty]
+        public virtual List<AppUserPost> PostIDs { get; set; }
 
 
         public static AppUser GetAppUser(IDynamoDBContext dynamoDBContext, string email)
