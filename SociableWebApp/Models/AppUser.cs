@@ -9,7 +9,7 @@ namespace SociableWebApp.Models
         public AppUser()
         {
             AccCreatedDate = DateTime.Now.ToString();
-            AppUserID = new Guid().ToString();
+            AppUserID = Guid.NewGuid().ToString();
         }
 
         [DynamoDBHashKey]
@@ -51,6 +51,25 @@ namespace SociableWebApp.Models
         public static AppUser GetAppUser(IDynamoDBContext dynamoDBContext, string email)
         {
             return dynamoDBContext.LoadAsync<AppUser>(email).Result;
+        }
+
+        internal static async Task<bool> CreateAppUser(IDynamoDBContext dynamoDBContext, AppUser newUser)
+        {
+            if (GetAppUser(dynamoDBContext, newUser.Email) is not null)
+            {
+                return false;
+            }
+
+            AppUser appUser = new AppUser
+            {
+                Email = newUser.Email,
+                Password = newUser.Password,
+                Name = newUser.Name,
+                PhoneNumber = newUser.PhoneNumber,
+            };
+
+            await dynamoDBContext.SaveAsync(appUser);
+            return true;
         }
     }
 

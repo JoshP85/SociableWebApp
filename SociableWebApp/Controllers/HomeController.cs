@@ -56,8 +56,14 @@ namespace SociableWebApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult Register([Bind("Email, FirstName, LastName, PhoneNumber, Location, Password")] AppUser newUser)
+        public async Task<IActionResult> RegisterAsync([Bind("Email, Name, PhoneNumber, Password")] AppUser newUser)
         {
+            var isSuccessful = await AppUser.CreateAppUser(dynamoDBContext, newUser);
+            if (isSuccessful)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            ModelState.AddModelError("RegisterFailed", $"{newUser.Email} is already registered with an account.");
             return View();
         }
 
