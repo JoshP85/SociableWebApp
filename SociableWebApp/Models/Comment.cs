@@ -2,16 +2,22 @@
 
 namespace SociableWebApp.Models
 {
-    public class PostComment : AppUserPost
+    public class Comment
     {
-        public PostComment()
+        public Comment()
         {
             CommentId = Guid.NewGuid().ToString();
             CommentDate = DateTime.Now.ToString();
         }
 
+
+        /*        public string PostID { get; set; }*/
+
+        [DynamoDBHashKey]
+        public string AuthorId { get; set; }
+
         [DynamoDBProperty]
-        public string CommentedById { get; set; }
+        public string AuthorName { get; set; }
 
         [DynamoDBProperty]
         public string CommentId { get; set; }

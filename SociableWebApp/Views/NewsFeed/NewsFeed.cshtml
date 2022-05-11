@@ -1,6 +1,7 @@
-﻿@model SociableWebApp.Models.AppUserPost
+﻿@model SociableWebApp.Models.Post
 @{
     var appUser = ViewBag.AppUser;
+    var posts = ViewBag.Posts;
 }
 
 you are here @appUser.Name
@@ -35,19 +36,16 @@ you are here @appUser.Name
                     <input type="submit" value="Post" class="btn btn-primary btn-login text-uppercase fw-bold" />
                 </div>
             </form>*@
-                            <ul class="list-group list-group-flush">
-                    <li class="list-group-item border-0">@appUser.Name</li>
-                    <li class="list-group-item border-0">@appUser.Email</li>
-                    <li class="list-group-item border-0">@appUser.City, @appUser.Country</li><li class="list-group-item border-0">@appUser.Name</li>
-                    <li class="list-group-item border-0">@appUser.Email</li>
-                    <li class="list-group-item border-0">@appUser.City, @appUser.Country</li><li class="list-group-item border-0">@appUser.Name</li>
-                    <li class="list-group-item border-0">@appUser.Email</li>
-                    <li class="list-group-item border-0">@appUser.City, @appUser.Country</li><li class="list-group-item border-0">@appUser.Name</li>
-                    <li class="list-group-item border-0">@appUser.Email</li>
-                    <li class="list-group-item border-0">@appUser.City, @appUser.Country</li><li class="list-group-item border-0">@appUser.Name</li>
-                    <li class="list-group-item border-0">@appUser.Email</li>
-                    <li class="list-group-item border-0">@appUser.City, @appUser.Country</li>
-                </ul>
+            @foreach(var post in posts)
+            {
+                <div>
+                    @post.PostDate
+                    @post.PostContent
+                    @post.AppUserID
+                    
+                </div>
+
+            }
         </div>
     </div>
 </div>

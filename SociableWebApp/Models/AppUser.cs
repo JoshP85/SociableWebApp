@@ -10,18 +10,19 @@ namespace SociableWebApp.Models
         {
             AccCreatedDate = DateTime.Now.ToString();
             AppUserID = Guid.NewGuid().ToString();
+            AccUpdatedDate = "";
         }
 
         [DynamoDBHashKey]
+        public string AppUserID { get; set; }
+
+        [DynamoDBProperty]
         [Required(ErrorMessage = "Email is required")]
         public string Email { get; set; }
 
         [DynamoDBProperty]
         [Required(ErrorMessage = "Password is required")]
         public string Password { get; set; }
-
-        [DynamoDBProperty]
-        public string AppUserID { get; set; }
 
         [DynamoDBProperty]
         [Required(ErrorMessage = "Name is required")]
@@ -45,15 +46,15 @@ namespace SociableWebApp.Models
         public string AccCreatedDate { get; set; }
 
         [DynamoDBProperty]
-        public string? AccUpdatedDate { get; set; }
+        public string AccUpdatedDate { get; set; }
 
         [DynamoDBProperty]
-        public virtual List<AppUserPost> PostIDs { get; set; }
+        public List<string> PostIDs { get; set; }
 
 
-        public static AppUser GetAppUser(IDynamoDBContext dynamoDBContext, string email)
+        public static AppUser GetAppUser(IDynamoDBContext dynamoDBContext, string userID)
         {
-            return dynamoDBContext.LoadAsync<AppUser>(email).Result;
+            return dynamoDBContext.LoadAsync<AppUser>(userID).Result;
         }
 
         internal static async Task<bool> CreateAppUser(IDynamoDBContext dynamoDBContext, AppUser newUser)

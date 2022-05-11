@@ -2,9 +2,10 @@
 
 namespace SociableWebApp.Models
 {
-    public class AppUserPost
+    [DynamoDBTable("Posts")]
+    public class Post
     {
-        public AppUserPost()
+        public Post()
         {
             PostID = Guid.NewGuid().ToString();
             PostDate = DateTime.Now.ToString();
@@ -18,6 +19,9 @@ namespace SociableWebApp.Models
 
         [DynamoDBProperty]
         public string AppUserID { get; set; }
+
+        [DynamoDBProperty]
+        public string Name { get; set; }
 
         [DynamoDBProperty]
         public string PostContent { get; set; }
@@ -38,6 +42,6 @@ namespace SociableWebApp.Models
         public int VoteDown { get; set; }
 
         [DynamoDBProperty]
-        public virtual List<PostComment> Comments { get; set; }
+        public virtual List<Comment> Comments { get; set; }
     }
 }

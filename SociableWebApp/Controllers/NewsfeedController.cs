@@ -10,7 +10,7 @@ namespace SociableWebApp.Controllers
     public class NewsfeedController : Controller
     {
 
-        private string UserEmail => HttpContext.Session.GetString(nameof(AppUser.Email));
+        private string AppUserID => HttpContext.Session.GetString(nameof(AppUser.AppUserID));
         private readonly IDynamoDBContext dynamoDBContext;
         private readonly IAmazonDynamoDB client;
 
@@ -19,9 +19,24 @@ namespace SociableWebApp.Controllers
             this.dynamoDBContext = dynamoDBContext;
             this.client = client;
         }
-        public ActionResult NewsFeed()
+        public async Task<ActionResult> NewsFeedAsync()
         {
-            AppUser appUser = AppUser.GetAppUser(dynamoDBContext, UserEmail);
+            var postList = new List<Post>();
+            var conditions = new List<ScanCondition>();
+
+
+            var posts = await dynamoDBContext.ScanAsync<Post>(conditions).GetRemainingAsync();
+            foreach (var post in posts)
+            {
+                postList.Add(post);
+
+            }
+
+
+            ViewBag.Posts = postList;
+
+
+            AppUser appUser = AppUser.GetAppUser(dynamoDBContext, AppUserID);
             ViewBag.AppUser = appUser;
 
             return View();
