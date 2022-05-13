@@ -24,22 +24,29 @@ namespace SociableWebApp.Controllers
             var postList = new List<Post>();
             var conditions = new List<ScanCondition>();
 
-
+            //TODO: Condition to be only friends posts are returned
             var posts = await dynamoDBContext.ScanAsync<Post>(conditions).GetRemainingAsync();
             foreach (var post in posts)
             {
                 postList.Add(post);
 
             }
-
-
             ViewBag.Posts = postList;
-
 
             AppUser appUser = AppUser.GetAppUser(dynamoDBContext, AppUserID);
             ViewBag.AppUser = appUser;
 
             return View();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> NewPostAsync([Bind("PostContent")] Post newPost)
+        {
+            var user = AppUser.GetAppUser(dynamoDBContext, AppUserID);
+
+            await Post.NewPostAsync(dynamoDBContext, newPost, user);
+
+            return RedirectToAction("Newsfeed", "NewsFeed");
         }
 
         public IActionResult Logout()

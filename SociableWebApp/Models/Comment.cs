@@ -6,21 +6,21 @@ namespace SociableWebApp.Models
     {
         public Comment()
         {
-            CommentId = Guid.NewGuid().ToString();
+            CommentID = Guid.NewGuid().ToString();
             CommentDate = DateTime.Now.ToString();
         }
 
-
-        /*        public string PostID { get; set; }*/
+        /*        [DynamoDBProperty]
+                public string PostID { get; set; }*/
 
         [DynamoDBHashKey]
-        public string AuthorId { get; set; }
+        public string CommentAuthorID { get; set; }
 
         [DynamoDBProperty]
-        public string AuthorName { get; set; }
+        public string CommentAuthorName { get; set; }
 
         [DynamoDBProperty]
-        public string CommentId { get; set; }
+        public string CommentID { get; set; }
 
         [DynamoDBProperty]
         public string CommentContent { get; set; }

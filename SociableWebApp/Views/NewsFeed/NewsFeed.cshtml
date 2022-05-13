@@ -4,16 +4,13 @@
     var posts = ViewBag.Posts;
 }
 
-you are here @appUser.Name
-
-
 <div class="container card border-0 shadow rounded-3 mt-5">
     <div class="row">
         <div class="d-flex col-4">
             <div class="m-3">
                 <div class="text-center">
                     <img src="@Url.Content("https://userprofileimgs3655612.s3.ap-southeast-2.amazonaws.com/" + @appUser.AppUserID)" alt="Image" style="width: 180px; height: 180px;" />
-                
+
                 </div>
                 <div class="text-center">
                     <a class="fw-bold" asp-controller="Newsfeed" asp-action="Logout" style="text-decoration:none">Logout</a>
@@ -25,32 +22,56 @@ you are here @appUser.Name
                 </ul>
             </div>
         </div>
-        <div class="d-flex col-8">
-@*            <form asp-controller="NewsFeed" asp-action="NewsFeed">
+        <div class="d-flex flex-column col m-3">
+            <form asp-controller="NewsFeed" asp-action="NewPost">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <div class="form-floating mb-3">
-                    <input asp-for="Artist" type="text" class="form-control" id="floatingInput" placeholder="Artist">
-                    <label for="floatingInput">Artist</label>
-                </div>
-                <div class="form-group text-center">
+            <div class="form-group">
+                <input type="hidden" asp-for="PostAuthorID" class="form-control" />
+                <input type="hidden" asp-for="PostAuthorName" class="form-control" />
+                <input type="hidden" asp-for="PostMediaUrl" class="form-control" />
+            </div>
+                    <div class="form-group">
+                        <textarea asp-for="PostContent" rows="2" placeholder="Whats on your mind..." class="form-control"></textarea>
+                    </div>
+                <div class="form-group">
                     <input type="submit" value="Post" class="btn btn-primary btn-login text-uppercase fw-bold" />
                 </div>
-            </form>*@
-            @foreach(var post in posts)
+            </form>
+            @foreach (var post in posts)
             {
-                <div>
+                <hr />
+                <div class="col-10 mb-3">
+                    <img src="@Url.Content("https://userprofileimgs3655612.s3.ap-southeast-2.amazonaws.com/" + @post.PostAuthorID)" alt="Image" style="width: 40px; height: 40px;" />
+                    <b>@post.PostAuthorName</b>
                     @post.PostDate
-                    @post.PostContent
-                    @post.AppUserID
-                    
-                </div>
+                    <div>
+                        @post.PostContent
+                    </div>
+                    @{
+                        int ccount = post.Comments.Count;
+                    }
+                    <p>
+                        <a data-bs-toggle="collapse" href="#b\\@post.PostID" role="button" aria-expanded="false" aria-controls="b\@post.PostID" style="text-decoration:none">
+                            Comments(@ccount)
+                        </a>
+                    </p>
+                    <div class="collapse" id="b\@post.PostID">
 
+                        @foreach (var comment in post.Comments)
+                        {
+                            <div class="col-10">
+                                <img src="@Url.Content("https://userprofileimgs3655612.s3.ap-southeast-2.amazonaws.com/" + @comment.CommentAuthorID)" alt="Image" style="width: 40px; height: 40px;" />
+                                <b>@comment.CommentAuthorName</b>
+                                @comment.CommentDate
+                                <div>
+                                    @comment.CommentContent
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
             }
         </div>
     </div>
 </div>
-
-
-
-
 @*<img src="@Url.Content("https://userprofileimgs3655612.s3.ap-southeast-2.amazonaws.com/" + @appUser.AppUserID)" alt="Image" style="width: 60px; height: 60px;" />*@

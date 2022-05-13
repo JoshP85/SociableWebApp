@@ -9,6 +9,7 @@ namespace SociableWebApp.Models
         {
             PostID = Guid.NewGuid().ToString();
             PostDate = DateTime.Now.ToString();
+            Comments = new List<Comment>();
             VoteTotal = 0;
             VoteUp = 0;
             VoteDown = 0;
@@ -18,10 +19,10 @@ namespace SociableWebApp.Models
         public string PostID { get; set; }
 
         [DynamoDBProperty]
-        public string AppUserID { get; set; }
+        public string PostAuthorID { get; set; }
 
         [DynamoDBProperty]
-        public string Name { get; set; }
+        public string PostAuthorName { get; set; }
 
         [DynamoDBProperty]
         public string PostContent { get; set; }
@@ -43,5 +44,24 @@ namespace SociableWebApp.Models
 
         [DynamoDBProperty]
         public virtual List<Comment> Comments { get; set; }
+
+        public static async Task NewPostAsync(IDynamoDBContext dynamoDBContext, Post newPost, AppUser user)
+        {
+            if (newPost.PostMediaUrl == null)
+            {
+                newPost.PostMediaUrl = "";
+            }
+
+            Post post = new Post
+            {
+                PostAuthorID = user.AppUserID,
+                PostAuthorName = user.Name,
+                PostID = newPost.PostID,
+                PostContent = newPost.PostContent,
+                PostDate = newPost.PostDate,
+                PostMediaUrl = newPost.PostMediaUrl,
+            };
+            await dynamoDBContext.SaveAsync(post);
+        }
     }
 }
