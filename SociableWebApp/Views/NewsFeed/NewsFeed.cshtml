@@ -26,8 +26,7 @@
             <form asp-controller="NewsFeed" asp-action="NewPost">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <input type="hidden" asp-for="PostAuthorID" class="form-control" />
-                <input type="hidden" asp-for="PostAuthorName" class="form-control" />
+                @*TODO: Make media uploading possible*@
                 <input type="hidden" asp-for="PostMediaUrl" class="form-control" />
             </div>
                     <div class="form-group">
@@ -68,6 +67,16 @@
                                 </div>
                             </div>
                         }
+                <form asp-controller="NewsFeed" asp-action="NewComment">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <textarea name="commentContent" rows="1" placeholder="Reply to @post.PostAuthorName" class="form-control"></textarea>
+                        <input type="hidden" name="postID" value="@post.PostID" class="form-control" />
+                    </div>
+                <div class="form-group">
+                    <input type="submit" value="Reply" class="btn btn-primary btn-login text-uppercase fw-bold" />
+                </div>
+            </form>
                     </div>
                 </div>
             }

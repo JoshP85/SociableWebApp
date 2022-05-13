@@ -45,6 +45,11 @@ namespace SociableWebApp.Models
         [DynamoDBProperty]
         public virtual List<Comment> Comments { get; set; }
 
+        public static Post GetPost(IDynamoDBContext dynamoDBContext, string postID)
+        {
+            return dynamoDBContext.LoadAsync<Post>(postID).Result;
+        }
+
         public static async Task NewPostAsync(IDynamoDBContext dynamoDBContext, Post newPost, AppUser user)
         {
             if (newPost.PostMediaUrl == null)

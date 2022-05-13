@@ -49,6 +49,16 @@ namespace SociableWebApp.Controllers
             return RedirectToAction("Newsfeed", "NewsFeed");
         }
 
+        [HttpPost]
+        public async Task<ActionResult> NewCommentAsync(string commentContent, string PostID)
+        {
+            var user = AppUser.GetAppUser(dynamoDBContext, AppUserID);
+
+            await Comment.NewCommentAsync(dynamoDBContext, commentContent, user, PostID);
+
+            return RedirectToAction("Newsfeed", "NewsFeed");
+        }
+
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
