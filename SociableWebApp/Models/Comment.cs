@@ -25,23 +25,28 @@ namespace SociableWebApp.Models
         [DynamoDBProperty]
         public string CommentDate { get; set; }
 
+        [DynamoDBIgnore]
+        public string TimeSinceComment { get; set; }
+
         public static async Task NewCommentAsync(IDynamoDBContext dynamoDBContext, string commentContent, AppUser user, string postID)
         {
-            Comment comment = new Comment
+            Comment comment = new()
             {
                 CommentAuthorID = user.AppUserID,
                 CommentAuthorName = user.Name,
                 CommentContent = commentContent,
             };
 
-            var commentList = new List<Comment>();
-            commentList.Add(comment);
+            var commentList = new List<Comment>
+            {
+                comment
+            };
+
             Post post = Post.GetPost(dynamoDBContext, postID);
 
             if (post.Comments.Any())
-            {
                 commentList.AddRange(post.Comments);
-            }
+
             post.Comments = commentList;
 
             await dynamoDBContext.SaveAsync(post);

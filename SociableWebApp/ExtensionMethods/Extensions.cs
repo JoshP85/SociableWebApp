@@ -17,9 +17,7 @@
             return "Just now";
         }
 
-        public static DateTime ConvertStringToDateTime(this string dateTime)
-        {
-            return DateTime.Parse(dateTime);
-        }
+        public static DateTime ConvertStringToDateTime(this string dateTime) => DateTime.Parse(dateTime);
+
     }
 }

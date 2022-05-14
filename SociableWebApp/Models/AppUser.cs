@@ -52,17 +52,12 @@ namespace SociableWebApp.Models
         public List<string> PostIDs { get; set; }
 
 
-        public static AppUser GetAppUser(IDynamoDBContext dynamoDBContext, string userID)
-        {
-            return dynamoDBContext.LoadAsync<AppUser>(userID).Result;
-        }
+        public static AppUser GetAppUser(IDynamoDBContext dynamoDBContext, string userID) => dynamoDBContext.LoadAsync<AppUser>(userID).Result;
 
         internal static async Task<bool> CreateAppUser(IDynamoDBContext dynamoDBContext, AppUser newUser)
         {
             if (GetAppUser(dynamoDBContext, newUser.Email) is not null)
-            {
                 return false;
-            }
 
             AppUser appUser = new AppUser
             {

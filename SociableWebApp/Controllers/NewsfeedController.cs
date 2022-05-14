@@ -20,6 +20,7 @@ namespace SociableWebApp.Controllers
             this.dynamoDBContext = dynamoDBContext;
             this.client = client;
         }
+
         public async Task<ActionResult> NewsFeedAsync()
         {
             var postList = new List<Post>();
@@ -27,16 +28,26 @@ namespace SociableWebApp.Controllers
 
             //TODO: Condition to be only friends posts are returned
             var posts = await dynamoDBContext.ScanAsync<Post>(conditions).GetRemainingAsync();
+
+            posts.Sort((x, y) => -x.PostDate.ConvertStringToDateTime().CompareTo(y.PostDate.ConvertStringToDateTime()));
+
             foreach (var post in posts)
             {
                 post.TimeSincePost = post.PostDate.GetTimeSince(DateTime.UtcNow);
-                postList.Add(post);
 
+                foreach (var comment in post.Comments)
+                {
+                    comment.TimeSinceComment = comment.CommentDate.GetTimeSince(DateTime.UtcNow);
+
+                }
+                post.Comments.Sort((x, y) => x.CommentDate.ConvertStringToDateTime().CompareTo(y.CommentDate.ConvertStringToDateTime()));
+
+                postList.Add(post);
             }
+
             ViewBag.Posts = postList;
 
-            AppUser appUser = AppUser.GetAppUser(dynamoDBContext, AppUserID);
-            ViewBag.AppUser = appUser;
+            ViewBag.AppUser = AppUser.GetAppUser(dynamoDBContext, AppUserID);
 
             return View();
         }

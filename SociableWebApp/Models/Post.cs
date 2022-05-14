@@ -29,6 +29,7 @@ namespace SociableWebApp.Models
 
         [DynamoDBProperty]
         public string PostDate { get; set; }
+
         [DynamoDBIgnore]
         public string TimeSincePost { get; set; }
 
@@ -47,19 +48,14 @@ namespace SociableWebApp.Models
         [DynamoDBProperty]
         public virtual List<Comment> Comments { get; set; }
 
-        public static Post GetPost(IDynamoDBContext dynamoDBContext, string postID)
-        {
-            return dynamoDBContext.LoadAsync<Post>(postID).Result;
-        }
+        public static Post GetPost(IDynamoDBContext dynamoDBContext, string postID) => dynamoDBContext.LoadAsync<Post>(postID).Result;
 
         public static async Task NewPostAsync(IDynamoDBContext dynamoDBContext, Post newPost, AppUser user)
         {
             if (newPost.PostMediaUrl == null)
-            {
                 newPost.PostMediaUrl = "";
-            }
 
-            Post post = new Post
+            Post post = new()
             {
                 PostAuthorID = user.AppUserID,
                 PostAuthorName = user.Name,
@@ -68,6 +64,7 @@ namespace SociableWebApp.Models
                 PostDate = newPost.PostDate,
                 PostMediaUrl = newPost.PostMediaUrl,
             };
+
             await dynamoDBContext.SaveAsync(post);
         }
     }
