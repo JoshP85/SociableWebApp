@@ -8,7 +8,7 @@ namespace SociableWebApp.Models
         public Post()
         {
             PostID = Guid.NewGuid().ToString();
-            PostDate = DateTime.Now.ToString();
+            PostDate = DateTime.UtcNow.ToString();
             Comments = new List<Comment>();
             VoteTotal = 0;
             VoteUp = 0;
@@ -29,6 +29,8 @@ namespace SociableWebApp.Models
 
         [DynamoDBProperty]
         public string PostDate { get; set; }
+        [DynamoDBIgnore]
+        public string TimeSincePost { get; set; }
 
         [DynamoDBProperty]
         public string? PostMediaUrl { get; set; }

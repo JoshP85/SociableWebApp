@@ -1,6 +1,7 @@
 ﻿using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Microsoft.AspNetCore.Mvc;
+using SociableWebApp.ExtensionMethods;
 using SociableWebApp.Models;
 using SociableWebApp.Session;
 
@@ -28,6 +29,7 @@ namespace SociableWebApp.Controllers
             var posts = await dynamoDBContext.ScanAsync<Post>(conditions).GetRemainingAsync();
             foreach (var post in posts)
             {
+                post.TimeSincePost = post.PostDate.GetTimeSince(DateTime.UtcNow);
                 postList.Add(post);
 
             }

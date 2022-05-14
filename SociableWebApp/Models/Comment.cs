@@ -7,11 +7,8 @@ namespace SociableWebApp.Models
         public Comment()
         {
             CommentID = Guid.NewGuid().ToString();
-            CommentDate = DateTime.Now.ToString();
+            CommentDate = DateTime.UtcNow.ToString();
         }
-
-        /*        [DynamoDBProperty]
-                public string PostID { get; set; }*/
 
         [DynamoDBHashKey]
         public string CommentAuthorID { get; set; }
