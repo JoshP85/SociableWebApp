@@ -11,6 +11,7 @@ namespace SociableWebApp.Models
             AccCreatedDate = DateTime.Now.ToString();
             AppUserID = Guid.NewGuid().ToString();
             AccUpdatedDate = "";
+            ProfileImgUrl = "https://userprofileimgs3655612.s3.ap-southeast-2.amazonaws.com/" + AppUserID;
         }
 
         [DynamoDBHashKey]
@@ -50,6 +51,15 @@ namespace SociableWebApp.Models
 
         [DynamoDBProperty]
         public List<string> PostIDs { get; set; }
+
+        [DynamoDBProperty]
+        public virtual List<Friend> FriendIDs { get; set; }
+
+        [DynamoDBProperty]
+        public List<string> SentFriendRequests { get; set; }
+
+        [DynamoDBProperty]
+        public List<string> RecievedFriendRequests { get; set; }
 
 
         public static AppUser GetAppUser(IDynamoDBContext dynamoDBContext, string userID) => dynamoDBContext.LoadAsync<AppUser>(userID).Result;

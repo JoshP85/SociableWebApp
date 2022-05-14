@@ -16,7 +16,9 @@
                     <a class="fw-bold" asp-controller="Newsfeed" asp-action="Logout" style="text-decoration:none">Logout</a>
                 </div>
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item border-0">@appUser.Name</li>
+                    <a class="list-group-item border-0" asp-controller="AppUser" asp-action="Profile">@appUser.Name</a>
+                    <a class="list-group-item border-0" asp-controller="AppUser" asp-action="PublicProfile">Public Profile</a>
+                    <a class="list-group-item border-0" asp-controller="AppUser" asp-action="PublicProfile">Friend Requests</a>
                     <li class="list-group-item border-0">@appUser.Email</li>
                     <li class="list-group-item border-0">@appUser.City, @appUser.Country</li>
                 </ul>
