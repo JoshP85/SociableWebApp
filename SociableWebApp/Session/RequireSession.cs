@@ -8,7 +8,7 @@ namespace SociableWebApp.Session
     {
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
-            var userEmail = filterContext.HttpContext.Session.GetString(nameof(AppUser.Email));
+            var userEmail = filterContext.HttpContext.Session.GetString(nameof(AppUser.AppUserID));
 
             if (userEmail == null)
             {

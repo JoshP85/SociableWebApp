@@ -19,7 +19,7 @@ namespace SociableWebApp.Data
                               {
                                   new AttributeDefinition
                                   {
-                                      AttributeName = "Email",
+                                      AttributeName = "AppUserID",
                                       AttributeType = "S"
                                   },
                               },
@@ -27,7 +27,7 @@ namespace SociableWebApp.Data
                               {
                                   new KeySchemaElement
                                   {
-                                      AttributeName = "Email",
+                                      AttributeName = "AppUserID",
                                       KeyType = "HASH"
                                   },
                               },

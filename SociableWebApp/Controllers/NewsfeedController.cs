@@ -1,6 +1,7 @@
 ﻿using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Microsoft.AspNetCore.Mvc;
+using SociableWebApp.ExtensionMethods;
 using SociableWebApp.Models;
 using SociableWebApp.Session;
 
@@ -10,7 +11,7 @@ namespace SociableWebApp.Controllers
     public class NewsfeedController : Controller
     {
 
-        private string UserEmail => HttpContext.Session.GetString(nameof(AppUser.Email));
+        private string AppUserID => HttpContext.Session.GetString(nameof(AppUser.AppUserID));
         private readonly IDynamoDBContext dynamoDBContext;
         private readonly IAmazonDynamoDB client;
 
@@ -19,12 +20,56 @@ namespace SociableWebApp.Controllers
             this.dynamoDBContext = dynamoDBContext;
             this.client = client;
         }
-        public ActionResult NewsFeed()
+
+        public async Task<ActionResult> NewsFeedAsync()
         {
-            AppUser appUser = AppUser.GetAppUser(dynamoDBContext, UserEmail);
-            ViewBag.AppUser = appUser;
+            var postList = new List<Post>();
+            var conditions = new List<ScanCondition>();
+
+            //TODO: Condition to be only friends posts are returned
+            var posts = await dynamoDBContext.ScanAsync<Post>(conditions).GetRemainingAsync();
+
+            posts.Sort((x, y) => -x.PostDate.ConvertStringToDateTime().CompareTo(y.PostDate.ConvertStringToDateTime()));
+
+            foreach (var post in posts)
+            {
+                post.TimeSincePost = post.PostDate.GetTimeSince(DateTime.UtcNow);
+
+                foreach (var comment in post.Comments)
+                {
+                    comment.TimeSinceComment = comment.CommentDate.GetTimeSince(DateTime.UtcNow);
+
+                }
+                post.Comments.Sort((x, y) => x.CommentDate.ConvertStringToDateTime().CompareTo(y.CommentDate.ConvertStringToDateTime()));
+
+                postList.Add(post);
+            }
+
+            ViewBag.Posts = postList;
+
+            ViewBag.AppUser = AppUser.GetAppUser(dynamoDBContext, AppUserID);
 
             return View();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> NewPostAsync([Bind("PostContent")] Post newPost)
+        {
+            var user = AppUser.GetAppUser(dynamoDBContext, AppUserID);
+
+            await Post.NewPostAsync(dynamoDBContext, newPost, user);
+
+            return RedirectToAction("Newsfeed", "NewsFeed");
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> NewCommentAsync(string commentContent, string PostID)
+        {
+            var user = AppUser.GetAppUser(dynamoDBContext, AppUserID);
+
+            await Comment.NewCommentAsync(dynamoDBContext, commentContent, user, PostID);
+
+            return RedirectToAction("Newsfeed", "NewsFeed");
         }
 
         public IActionResult Logout()

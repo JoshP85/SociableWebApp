@@ -1,5 +1,6 @@
 ﻿using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
+using Amazon.DynamoDBv2.Model;
 using Amazon.S3;
 using Microsoft.AspNetCore.Mvc;
 using SociableWebApp.Data;
@@ -31,17 +32,37 @@ namespace SociableWebApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult Index(string email, string password)
+        public async Task<IActionResult> IndexAsync(string email, string password)
         {
             if (email is not null)
             {
-                AppUser user = AppUser.GetAppUser(dynamoDBContext, email);
-                if (user is not null)
+                var request = new ScanRequest
                 {
-                    if (password == user.Password)
+                    TableName = "AppUsers",
+                    ExpressionAttributeValues = new Dictionary<string, AttributeValue> {
+                    {":val", new AttributeValue { S = email }}
+                },
+                    FilterExpression = "Email = :val",
+                };
+                ScanResponse response = await client.ScanAsync(request);
+
+                if (response.Count > 0)
+                {
+                    string userID = "";
+                    foreach (Dictionary<string, AttributeValue> item in response.Items)
                     {
-                        HttpContext.Session.SetString(nameof(AppUser.Email), user.Email);
-                        return RedirectToAction("NewsFeed", "NewsFeed");
+                        userID = item["AppUserID"].S.ToString();
+                    }
+
+                    AppUser user = AppUser.GetAppUser(dynamoDBContext, userID);
+
+                    if (user is not null)
+                    {
+                        if (password == user.Password)
+                        {
+                            HttpContext.Session.SetString(nameof(AppUser.AppUserID), user.AppUserID);
+                            return RedirectToAction("NewsFeed", "NewsFeed");
+                        }
                     }
                 }
             }
