@@ -31,8 +31,25 @@ namespace SociableWebApp.Controllers
             return View(AppUser.GetAppUser(dynamoDBContext, AppUserID));
         }
 
-        // GET: AppUserController/Create
+        [HttpPost]
+        public ActionResult PublicProfile(string appUserID)
+        {
+            return View(AppUser.GetAppUser(dynamoDBContext, appUserID));
+        }
+
+        public ActionResult SendFriendRequest(string receiverID)
+        {
+            FriendRequest.CreateFriendRequest(dynamoDBContext, AppUserID, receiverID);
+            // string senderID = AppUserID;
+            return RedirectToAction("NewsFeed", "NewsFeed");
+        }
+
         public ActionResult Create()
+        {
+            return View();
+        }
+
+        public ActionResult FriendRequestAccepted(string newFriendID, string approvedByID)
         {
             return View();
         }

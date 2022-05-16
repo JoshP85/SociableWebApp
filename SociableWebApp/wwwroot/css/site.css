@@ -19,6 +19,14 @@ body {
     background-color: lightseagreen;
 }
 
+.no-button-style {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    padding: 0px;
+}
+
 p{
     color:black;
 }
@@ -55,3 +63,4 @@ input::-webkit-inner-spin-button {
 input[type=number] {
     -moz-appearance: textfield;
 }
+

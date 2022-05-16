@@ -53,13 +53,13 @@ namespace SociableWebApp.Models
         public List<string> PostIDs { get; set; }
 
         [DynamoDBProperty]
-        public virtual List<Friend> FriendIDs { get; set; }
+        public virtual List<Friend> Friends { get; set; }
 
         [DynamoDBProperty]
-        public List<string> SentFriendRequests { get; set; }
+        public virtual List<FriendRequest> SentFriendRequests { get; set; }
 
         [DynamoDBProperty]
-        public List<string> RecievedFriendRequests { get; set; }
+        public virtual List<FriendRequest> ReceivedFriendRequests { get; set; }
 
 
         public static AppUser GetAppUser(IDynamoDBContext dynamoDBContext, string userID) => dynamoDBContext.LoadAsync<AppUser>(userID).Result;
@@ -80,6 +80,8 @@ namespace SociableWebApp.Models
             await dynamoDBContext.SaveAsync(appUser);
             return true;
         }
+
+
     }
 
 

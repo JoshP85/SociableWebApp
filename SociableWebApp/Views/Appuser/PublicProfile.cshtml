@@ -43,8 +43,10 @@
         </dd>
     </dl>
 </div>
-<div>
-    <b><a asp-controller="NewsFeed" asp-action="Newsfeed">Add Friend</a></b>
+<div><form asp-controller="AppUser" asp-action="SendFriendRequest">
+    <input type="hidden" asp-for="AppUserID" name="receiverID" class="form-control" />
+    <b><input type="submit" value="Add Friend" /></b>
+</form>
 </div>
 <div>
     <a asp-controller="NewsFeed" asp-action="Newsfeed">Back to List</a>
