@@ -104,26 +104,73 @@
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Friend Requests</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
             <div class="modal-body">
+                <h5 class="modal-title text-center mb-3" id="exampleModalLabel">Friend Requests</h5>
                 @if (appUser.ReceivedFriendRequests != null)
                 {
                     @foreach (var friendRequest in appUser.ReceivedFriendRequests)
                     {
-                        <p>@friendRequest.Name</p>
-                        <p>@friendRequest.City</p>
-                        <p>@friendRequest.Country</p>
-                        <p>@friendRequest.ProfileImgUrl</p>
+                        <div class="container">
+                            <div class="row justify-content-between mt-2">
+                                <div class=col-8>
+                                    <div class="row justify-content-start">
+                                        <div class="col-3 p-0">
+                                            <img src="@Url.Content("https://userprofileimgs3655612.s3.ap-southeast-2.amazonaws.com/" + @friendRequest.AppUserID)" alt="Image" style="width: 60px; height: 60px;" />
+                                        </div>
+                                        <div class="col-9 p-0">
+                                            <form asp-controller="AppUser" asp-action="PublicProfile">
+                                                <input type="hidden" name="appUserID" value="@friendRequest.AppUserID" class="form-control" />
+                                                <input type="submit" class="no-button-style fw-bold" value="@friendRequest.Name" />
+                                                <p>@friendRequest.City, @friendRequest.Country</p>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-4 ps-4 pe-0 mt-1">
+                                    <form asp-controller="AppUser" asp-action="ConfirmFriendRequest">
+                                        <input type="hidden" name="senderID" value="@friendRequest.AppUserID" class="form-control" />
+                                        <button type="submit" name="accept" value="true" class="btn btn-primary fw-bold">Confirm</button>
+                                        <button type="submit" name="accept" value="false" class="btn-close"></button>
+                                    </form>
+
+                                </div>
+                            </div>
+                        </div>
                     }
                 }
-
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+            <div class="modal-body">
+                <h5 class="modal-title text-center mb-3" id="exampleModalLabel">Pending Requests</h5>
+                @if (appUser.ReceivedFriendRequests != null)
+                {
+                    @foreach (var friendRequest in appUser.SentFriendRequests)
+                    {
+                        <div class="container">
+                            <div class="row justify-content-between mt-2">
+                                <div class=col-8>
+                                    <div class="row justify-content-start">
+                                        <div class="col-3 p-0">
+                                            <img src="@Url.Content("https://userprofileimgs3655612.s3.ap-southeast-2.amazonaws.com/" + @friendRequest.AppUserID)" alt="Image" style="width: 60px; height: 60px;" />
+                                        </div>
+                                        <div class="col-9 p-0">
+                                            <form asp-controller="AppUser" asp-action="PublicProfile">
+                                                <input type="hidden" name="appUserID" value="@friendRequest.AppUserID" class="form-control" />
+                                                <input type="submit" class="no-button-style fw-bold" value="@friendRequest.Name" />
+                                                <p>@friendRequest.City, @friendRequest.Country</p>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-4 ps-4 pe-0 mt-1">
+                                    <form asp-controller="AppUser" asp-action="RemovePendingRequest">
+                                    <input type="hidden" name="receiverID" value="@friendRequest.AppUserID" class="form-control" />
+                                    <button type="submit" class="btn btn-secondary fw-bold">Remove</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
             </div>
         </div>
     </div>

@@ -4,8 +4,8 @@ namespace SociableWebApp.Models
 {
     public class FriendRequest
     {
-
-        public string AppUserId { get; set; }
+        [DynamoDBHashKey]
+        public string AppUserID { get; set; }
 
         public string Name { get; set; }
 
@@ -13,65 +13,74 @@ namespace SociableWebApp.Models
 
         public string? Country { get; set; }
 
-        public string? ProfileImgUrl { get; set; }
-
         public static async void CreateFriendRequest(IDynamoDBContext dynamoDBContext, string senderID, string receiverID)
         {
             AppUser sender = AppUser.GetAppUser(dynamoDBContext, senderID);
             AppUser receiver = AppUser.GetAppUser(dynamoDBContext, receiverID);
 
+            // Avoids entries in the DB that would be the user requesting friendship with themselves.
             if (senderID == receiverID)
                 return;
 
+            // Avoids multiple entries of the same request in the DB.
             foreach (var sentRequest in sender.SentFriendRequests)
             {
-                if (sentRequest.AppUserId == receiverID)
+                if (sentRequest.AppUserID == receiverID)
                     return;
             }
 
-
-            FriendRequest sendFriendRequest = new()
+            // The user who sent the friend request, this updates their SentFriendRequest list
+            // with the details of the user they sent the request to.
+            FriendRequest detailsOfReceiver = new()
             {
-                AppUserId = receiver.AppUserID,
+                AppUserID = receiver.AppUserID,
                 Name = receiver.Name,
                 City = receiver.City,
                 Country = receiver.Country,
-                ProfileImgUrl = receiver.ProfileImgUrl,
-            };
-            var requestSendList = new List<FriendRequest>
-            {
-                sendFriendRequest
             };
 
-            if (sender.SentFriendRequests.Any())
-                requestSendList.AddRange(sender.SentFriendRequests);
-
-            sender.SentFriendRequests = requestSendList;
+            sender.SentFriendRequests.Add(detailsOfReceiver);
 
             await dynamoDBContext.SaveAsync(sender);
 
-
-            FriendRequest receivedList = new()
+            // The user who receives the friend request, this updates their ReceivedFriendRequests list
+            // with the details of the user who sent the request.
+            FriendRequest detailsOfSender = new()
             {
-                AppUserId = sender.AppUserID,
+                AppUserID = sender.AppUserID,
                 Name = sender.Name,
                 City = sender.City,
                 Country = sender.Country,
-                ProfileImgUrl = sender.ProfileImgUrl,
             };
 
-            var requestReceiveList = new List<FriendRequest>
-            {
-                receivedList
-            };
-
-            if (receiver.ReceivedFriendRequests != null)
-                requestReceiveList.AddRange(sender.ReceivedFriendRequests);
-
-            receiver.ReceivedFriendRequests = requestReceiveList;
+            receiver.ReceivedFriendRequests.Add(detailsOfSender);
 
             await dynamoDBContext.SaveAsync(receiver);
         }
 
+        public static async Task RemoveRequestAsync(IDynamoDBContext dynamoDBContext, string senderID, string receiverID)
+        {
+            AppUser sender = AppUser.GetAppUser(dynamoDBContext, senderID);
+            AppUser receiver = AppUser.GetAppUser(dynamoDBContext, receiverID);
+
+
+            foreach (var request in sender.SentFriendRequests.ToList())
+            {
+                if (request.AppUserID == receiverID)
+                {
+                    sender.SentFriendRequests.Remove(request);
+                    await dynamoDBContext.SaveAsync(sender);
+                }
+            }
+
+            foreach (var request in receiver.ReceivedFriendRequests.ToList())
+            {
+                if (request.AppUserID == senderID)
+                {
+                    receiver.ReceivedFriendRequests.Remove(request);
+                    await dynamoDBContext.SaveAsync(receiver);
+                }
+            }
+        }
     }
 }

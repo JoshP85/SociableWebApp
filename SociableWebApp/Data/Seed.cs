@@ -37,7 +37,6 @@ namespace SociableWebApp.Data
                     Country = item.country,
                     AccCreatedDate = item.accCreatedDate,
                     AccUpdatedDate = item.accUpdatedDate,
-                    ProfileImgUrl = "https://userprofileimgs3655612.s3.ap-southeast-2.amazonaws.com/" + item.id,
                     ReceivedFriendRequests = new List<FriendRequest> { },
                     SentFriendRequests = new List<FriendRequest> { },
                     Friends = new List<Friend> { },

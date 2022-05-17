@@ -11,7 +11,6 @@ namespace SociableWebApp.Models
             AccCreatedDate = DateTime.Now.ToString();
             AppUserID = Guid.NewGuid().ToString();
             AccUpdatedDate = "";
-            ProfileImgUrl = "https://userprofileimgs3655612.s3.ap-southeast-2.amazonaws.com/" + AppUserID;
         }
 
         [DynamoDBHashKey]
@@ -40,17 +39,17 @@ namespace SociableWebApp.Models
         public string? Country { get; set; }
 
         [DynamoDBProperty]
-        public string? ProfileImgUrl { get; set; }
-
-        [DynamoDBProperty]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
         public string AccCreatedDate { get; set; }
 
         [DynamoDBProperty]
         public string AccUpdatedDate { get; set; }
 
+        [DynamoDBIgnore]
+        public string UserImageFile { get; set; }
+
         [DynamoDBProperty]
-        public List<string> PostIDs { get; set; }
+        public List<Post> Posts { get; set; }
 
         [DynamoDBProperty]
         public virtual List<Friend> Friends { get; set; }

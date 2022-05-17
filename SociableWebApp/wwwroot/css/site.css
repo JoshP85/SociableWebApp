@@ -36,10 +36,16 @@ p{
     color: darkgray
 }
 
-card{
+.modal-title {
+    font-family: 'Oleo Script Swash Caps', cursive;
+    font-size: 40px;
+}
+
+card {
     background-color: white;
 }
-label{
+
+label {
     opacity: 0.7;
 }
 

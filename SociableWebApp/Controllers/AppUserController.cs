@@ -49,9 +49,21 @@ namespace SociableWebApp.Controllers
             return View();
         }
 
-        public ActionResult FriendRequestAccepted(string newFriendID, string approvedByID)
+        public async Task<ActionResult> ConfirmFriendRequestAsync(string senderID, bool accept)
         {
-            return View();
+            if (accept)
+                Friend.AddNewFriend(dynamoDBContext, senderID, AppUserID);
+            else
+                await FriendRequest.RemoveRequestAsync(dynamoDBContext, senderID, AppUserID);
+
+            return RedirectToAction("NewsFeed", "NewsFeed");
+        }
+
+        public async Task<ActionResult> RemovePendingRequest(string receiverID)
+        {
+            await FriendRequest.RemoveRequestAsync(dynamoDBContext, AppUserID, receiverID);
+
+            return RedirectToAction("NewsFeed", "NewsFeed");
         }
 
         // POST: AppUserController/Create
