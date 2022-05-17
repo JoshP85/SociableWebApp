@@ -75,5 +75,12 @@ namespace SociableWebApp.Controllers
 
             return RedirectToAction("NewsFeed", "NewsFeed");
         }
+
+        public async Task<ActionResult> Unfriend(string removeFriendID)
+        {
+            await Friend.Unfriend(dynamoDBContext, AppUserID, removeFriendID);
+
+            return RedirectToAction("Profile", "AppUser");
+        }
     }
 }

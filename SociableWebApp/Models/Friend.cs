@@ -33,5 +33,29 @@ namespace SociableWebApp.Models
 
             await FriendRequest.RemoveRequestAsync(dynamoDBContext, senderID, receiverID);
         }
+
+        public static async Task Unfriend(IDynamoDBContext dynamoDBContext, string appUserID, string removeFriendID)
+        {
+            AppUser user = AppUser.GetAppUser(dynamoDBContext, appUserID);
+            AppUser removedUser = AppUser.GetAppUser(dynamoDBContext, removeFriendID);
+
+            foreach (var friendID in user.Friends.ToList())
+            {
+                if (friendID.FriendID == removedUser.AppUserID)
+                {
+                    user.Friends.Remove(friendID);
+                    await dynamoDBContext.SaveAsync(user);
+                }
+            }
+
+            foreach (var friendID in removedUser.Friends.ToList())
+            {
+                if (friendID.FriendID == user.AppUserID)
+                {
+                    removedUser.Friends.Remove(friendID);
+                    await dynamoDBContext.SaveAsync(removedUser);
+                }
+            }
+        }
     }
 }

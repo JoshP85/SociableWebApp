@@ -4,73 +4,106 @@
     ViewData["Title"] = "Profile";
     var friends = ViewBag.Friends;
 }
+<div class="container card border-0 shadow rounded-3 mt-5">
+    <h1>Profile</h1>
 
-<h1>Profile</h1>
-@foreach(var friend in friends)
-{
-    @friend.Name;
-}
-<div>
-    <h4>AppUser</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AppUserID)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.AppUserID)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Email)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Password)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Password)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PhoneNumber)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PhoneNumber)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.City)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.City)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Country)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Country)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AccCreatedDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.AccCreatedDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AccUpdatedDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.AccUpdatedDate)
-        </dd>
-    </dl>
-</div>
-<div>
-    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
-    <a asp-controller="NewsFeed" asp-action="Newsfeed">Back to List</a>
+    <div>
+        <h4>@Model.Name</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.AppUserID)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.AppUserID)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Email)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Email)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Password)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Password)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Name)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Name)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.PhoneNumber)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.PhoneNumber)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.City)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.City)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Country)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Country)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.AccCreatedDate)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.AccCreatedDate)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.AccUpdatedDate)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.AccUpdatedDate)
+            </dd>
+            <dd class="col-sm-10">
+
+
+
+
+            </dd>
+        </dl>
+    </div>
+    @foreach (var friend in friends)
+    {
+        <div class="row">
+            <div class="container">
+                <div class="row justify-content-between mt-2">
+                    <div class=col-8>
+                        <div class="row justify-content-start">
+                            <div class="col-3 p-0">
+                                <img src="@Url.Content("https://userprofileimgs3655612.s3.ap-southeast-2.amazonaws.com/" + @friend.AppUserID)" alt="Image" style="width: 60px; height: 60px;" />
+                            </div>
+                            <div class="col-9 p-0">
+                                <form asp-controller="AppUser" asp-action="PublicProfile">
+                                    <input type="hidden" name="appUserID" value="@friend.AppUserID" class="form-control" />
+                                    <input type="submit" class="no-button-style fw-bold" value="@friend.Name;" />
+                                    <p>@friend.City, @friend.Country</p>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4 ps-4 pe-0 mt-1">
+                        <form asp-controller="AppUser" asp-action="Unfriend">
+                            <input type="hidden" name="removeFriendID" value="@friend.AppUserID" class="form-control" />
+                            <button type="submit" class="btn btn-secondary fw-bold">Unfriend</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    <div>
+        @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+        <a asp-controller="NewsFeed" asp-action="Newsfeed">Back to List</a>
+    </div>
 </div>
