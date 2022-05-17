@@ -7,9 +7,31 @@ namespace SociableWebApp.Models
         public string FriendID { get; set; }
 
 
-        public static void AddNewFriend(IDynamoDBContext dynamoDBContext, string newFriendID, string appUserID)
+        public static async Task AddNewFriendAsync(IDynamoDBContext dynamoDBContext, string senderID, string receiverID)
         {
+            AppUser sender = AppUser.GetAppUser(dynamoDBContext, senderID);
+            AppUser receiver = AppUser.GetAppUser(dynamoDBContext, receiverID);
 
+            Friend friend = new()
+            {
+                FriendID = sender.AppUserID,
+            };
+
+            receiver.Friends.Add(friend);
+
+            await dynamoDBContext.SaveAsync(receiver);
+
+
+            friend = new Friend()
+            {
+                FriendID = receiver.AppUserID,
+            };
+
+            sender.Friends.Add(friend);
+
+            await dynamoDBContext.SaveAsync(sender);
+
+            await FriendRequest.RemoveRequestAsync(dynamoDBContext, senderID, receiverID);
         }
     }
 }

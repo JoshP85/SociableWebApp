@@ -23,7 +23,17 @@ namespace SociableWebApp.Controllers
 
         public ActionResult Profile()
         {
-            return View(AppUser.GetAppUser(dynamoDBContext, AppUserID));
+            var appuser = AppUser.GetAppUser(dynamoDBContext, AppUserID);
+            var friends = new List<AppUser>();
+
+            foreach (var friend in appuser.Friends)
+            {
+                friends.Add(AppUser.GetAppUser(dynamoDBContext, friend.FriendID));
+            }
+
+            ViewBag.Friends = friends;
+
+            return View(appuser);
         }
 
         public ActionResult PublicProfile()
@@ -52,7 +62,7 @@ namespace SociableWebApp.Controllers
         public async Task<ActionResult> ConfirmFriendRequestAsync(string senderID, bool accept)
         {
             if (accept)
-                Friend.AddNewFriend(dynamoDBContext, senderID, AppUserID);
+                await Friend.AddNewFriendAsync(dynamoDBContext, senderID, AppUserID);
             else
                 await FriendRequest.RemoveRequestAsync(dynamoDBContext, senderID, AppUserID);
 
@@ -64,63 +74,6 @@ namespace SociableWebApp.Controllers
             await FriendRequest.RemoveRequestAsync(dynamoDBContext, AppUserID, receiverID);
 
             return RedirectToAction("NewsFeed", "NewsFeed");
-        }
-
-        // POST: AppUserController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: AppUserController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: AppUserController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: AppUserController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: AppUserController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
         }
     }
 }

@@ -2,10 +2,14 @@
 
 @{
     ViewData["Title"] = "Profile";
+    var friends = ViewBag.Friends;
 }
 
 <h1>Profile</h1>
-
+@foreach(var friend in friends)
+{
+    @friend.Name;
+}
 <div>
     <h4>AppUser</h4>
     <hr />
