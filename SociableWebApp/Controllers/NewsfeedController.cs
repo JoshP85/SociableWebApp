@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using SociableWebApp.ExtensionMethods;
 using SociableWebApp.Models;
 using SociableWebApp.Session;
+using SociableWebApp.ViewModels;
 
 namespace SociableWebApp.Controllers
 {
@@ -44,17 +45,14 @@ namespace SociableWebApp.Controllers
 
                 postList.Add(post);
             }
-            /*            AppUser appuser = AppUser.GetAppUser(dynamoDBContext, AppUserID);
-                        var friendRequestList = new List<string>();
-                        foreach (var friendRequest in appuser.ReceivedFriendRequests)
-                        {
 
-                        }*/
-            ViewBag.Posts = postList;
+            NewsFeedViewModel newsfeedVM = new NewsFeedViewModel()
+            {
+                Posts = postList,
+                AppUser = AppUser.GetAppUser(dynamoDBContext, AppUserID)
+            };
 
-            ViewBag.AppUser = AppUser.GetAppUser(dynamoDBContext, AppUserID);
-
-            return View();
+            return View(newsfeedVM);
         }
 
         [HttpPost]

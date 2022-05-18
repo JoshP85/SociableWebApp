@@ -11,6 +11,9 @@ namespace SociableWebApp.Models
             AccCreatedDate = DateTime.Now.ToString();
             AppUserID = Guid.NewGuid().ToString();
             AccUpdatedDate = "";
+            ReceivedFriendRequests = new List<FriendRequest> { };
+            SentFriendRequests = new List<FriendRequest> { };
+            Friends = new List<Friend> { };
         }
 
         [DynamoDBHashKey]

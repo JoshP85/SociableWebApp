@@ -15,7 +15,7 @@ html {
 }
 
 body {
-    margin-bottom: 60px;
+    /*margin-bottom: 60px;*/
     background-color: lightseagreen;
 }
 
@@ -35,14 +35,20 @@ p{
     font-size: 110px;
     color: darkgray
 }
+.headingFeed {
+    font-family: 'Oleo Script Swash Caps', cursive;
+    font-size: 90px;
+    color: darkgray
+}
 
 .modal-title {
     font-family: 'Oleo Script Swash Caps', cursive;
     font-size: 40px;
 }
 
-card {
-    background-color: white;
+.card, .list-group-item {
+    /*background-color: white;*/
+    background-color: whitesmoke;
 }
 
 label {
@@ -54,8 +60,12 @@ label {
     font-size: smaller;
 }
 
-*:focus {
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
     outline: none;
+    box-shadow: none;
 }
 /*<--- Hide arrows from number input --->*/
 /* Chrome, Safari, Edge, Opera */
@@ -70,3 +80,42 @@ input[type=number] {
     -moz-appearance: textfield;
 }
 
+.scroll {
+    height: 100vh;
+    overflow-y: scroll;
+}
+ /*Hide scrollbar for Chrome, Safari and Opera */
+    .scroll::-webkit-scrollbar {
+        display: none;
+    }
+
+ /*Hide scrollbar for IE, Edge and Firefox */
+.scroll {
+    -ms-overflow-style: none; /*IE and Edge */
+    scrollbar-width: none; /*Firefox*/
+}
+
+textarea {
+    border: none;
+    background-color: transparent;
+    resize: none;
+    outline: none;
+    border-radius: 25px;
+}
+#txtarea {
+    border-radius: 25px;
+    background-color: whitesmoke;
+}
+.post-area {
+    /*background-color: whitesmoke;*/
+    background-color: white;
+}
+
+.comment-area {
+    /*background-color: gainsboro;*/
+    background-color: whitesmoke;
+}
+
+.rounded-corners {
+    border-radius: 25px;
+}
