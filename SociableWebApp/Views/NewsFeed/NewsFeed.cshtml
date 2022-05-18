@@ -17,7 +17,7 @@
                 </div>
                 <ul class="list-group list-group-flush">
                     <a class="list-group-item border-0" asp-controller="AppUser" asp-action="Profile">@appUser.Name</a>
-                    <a class="list-group-item border-0" asp-controller="AppUser" asp-action="PublicProfile">Public Profile</a>
+                    @*<a class="list-group-item border-0" asp-controller="AppUser" asp-action="PublicProfile">Public Profile</a>*@
                     @if (@appUser.ReceivedFriendRequests == null)
                     {
                         <a class="list-group-item border-0" data-bs-toggle="modal" href="#exampleModal">Friend Requests(0)</a>

@@ -3,9 +3,12 @@ using Amazon.DynamoDBv2.DataModel;
 using Amazon.S3;
 using Microsoft.AspNetCore.Mvc;
 using SociableWebApp.Models;
+using SociableWebApp.Session;
+using SociableWebApp.ViewModels;
 
 namespace SociableWebApp.Controllers
 {
+    [RequireSession]
     public class AppUserController : Controller
     {
         private string AppUserID => HttpContext.Session.GetString(nameof(AppUser.AppUserID));
@@ -36,15 +39,26 @@ namespace SociableWebApp.Controllers
             return View(appuser);
         }
 
-        public ActionResult PublicProfile()
-        {
-            return View(AppUser.GetAppUser(dynamoDBContext, AppUserID));
-        }
+        /*        public ActionResult PublicProfile()
+                {
+                    return View(AppUser.GetAppUser(dynamoDBContext, AppUserID));
+                }*/
 
-        [HttpPost]
         public ActionResult PublicProfile(string appUserID)
         {
-            return View(AppUser.GetAppUser(dynamoDBContext, appUserID));
+            var user = AppUser.GetAppUser(dynamoDBContext, AppUserID);
+
+            var PublicProfileViewModel = new PublicProfileViewModel
+            {
+                OwnerOfProfile = AppUser.GetAppUser(dynamoDBContext, appUserID),
+                CurrentUser = user,
+                IsOwnerAFriend = user.Friends.Any(friend => friend.FriendID == appUserID),
+                IsRelationshipPending = user.SentFriendRequests.Any(x => x.AppUserID == appUserID),
+                IsRelationshipNotConfirmed = user.ReceivedFriendRequests.Any(x => x.AppUserID == appUserID),
+                IsOwnerCurrentSessionUser = (appUserID == AppUserID),
+            };
+
+            return View(PublicProfileViewModel);
         }
 
         public ActionResult SendFriendRequest(string receiverID)
