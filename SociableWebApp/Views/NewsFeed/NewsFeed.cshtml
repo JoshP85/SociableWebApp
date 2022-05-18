@@ -16,7 +16,16 @@
                     <a class="fw-bold" asp-controller="Newsfeed" asp-action="Logout" style="text-decoration:none">Logout</a>
                 </div>
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item border-0">@appUser.Name</li>
+                    <a class="list-group-item border-0" asp-controller="AppUser" asp-action="Profile">@appUser.Name</a>
+                    @*<a class="list-group-item border-0" asp-controller="AppUser" asp-action="PublicProfile">Public Profile</a>*@
+                    @if (@appUser.ReceivedFriendRequests == null)
+                    {
+                        <a class="list-group-item border-0" data-bs-toggle="modal" href="#exampleModal">Friend Requests(0)</a>
+                    }
+                    else
+                    {
+                        <a class="list-group-item border-0" data-bs-toggle="modal" href="#exampleModal">Friend Requests(@appUser.ReceivedFriendRequests.Count)</a>
+                    }
                     <li class="list-group-item border-0">@appUser.Email</li>
                     <li class="list-group-item border-0">@appUser.City, @appUser.Country</li>
                 </ul>
@@ -25,13 +34,13 @@
         <div class="d-flex flex-column col m-3">
             <form asp-controller="NewsFeed" asp-action="NewPost">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                @*TODO: Make media uploading possible*@
-                <input type="hidden" asp-for="PostMediaUrl" class="form-control" />
-            </div>
-                    <div class="form-group">
-                        <textarea asp-for="PostContent" rows="2" placeholder="Whats on your mind..." class="form-control"></textarea>
-                    </div>
+                <div class="form-group">
+                    @*TODO: Make media uploading possible*@
+                    <input type="hidden" asp-for="PostMediaUrl" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <textarea asp-for="PostContent" rows="2" placeholder="Whats on your mind..." class="form-control"></textarea>
+                </div>
                 <div class="form-group">
                     <input type="submit" value="Post" class="btn btn-primary btn-login text-uppercase fw-bold" />
                 </div>
@@ -40,18 +49,24 @@
             {
                 <hr />
                 <div class="col-10 mb-3">
-                    <img src="@Url.Content("https://userprofileimgs3655612.s3.ap-southeast-2.amazonaws.com/" + @post.PostAuthorID)" alt="Image" style="width: 40px; height: 40px;" />
-                    <b>@post.PostAuthorName</b>
-                    @post.TimeSincePost
+                    <div class="d-flex flex-row mb-1">
+                        <img src="@Url.Content("https://userprofileimgs3655612.s3.ap-southeast-2.amazonaws.com/" + @post.PostAuthorID)" alt="Image" style="width: 40px; height: 40px;" />
+                        <div class="ms-4 mt-2">
+                            <form asp-controller="AppUser" asp-action="PublicProfile">
+                                <input type="hidden" name="appUserID" value="@post.PostAuthorID" class="form-control" />
+                                <input type="submit" class="no-button-style fw-bold" value="@post.PostAuthorName" />
+                            </form>
+                        </div>
+                        <div class="ms-2 mt-2">
+                            @post.TimeSincePost
+                        </div>
+                    </div>
                     <div>
                         @post.PostContent
                     </div>
-                    @{
-                        int ccount = post.Comments.Count;
-                    }
                     <p>
                         <a data-bs-toggle="collapse" href="#b\\@post.PostID" role="button" aria-expanded="false" aria-controls="b\@post.PostID" style="text-decoration:none">
-                            Comments(@ccount)
+                            Comments(@post.Comments.Count)
                         </a>
                     </p>
                     <div class="collapse" id="b\@post.PostID">
@@ -67,20 +82,98 @@
                                 </div>
                             </div>
                         }
-                <form asp-controller="NewsFeed" asp-action="NewComment">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    <div class="form-group">
-                        <textarea name="commentContent" rows="1" placeholder="Reply to @post.PostAuthorName" class="form-control"></textarea>
-                        <input type="hidden" name="postID" value="@post.PostID" class="form-control" />
-                    </div>
-                <div class="form-group">
-                    <input type="submit" value="Reply" class="btn btn-primary btn-login text-uppercase fw-bold" />
-                </div>
-            </form>
+                        <form asp-controller="NewsFeed" asp-action="NewComment">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group">
+                                <textarea name="commentContent" rows="1" placeholder="Reply to @post.PostAuthorName" class="form-control"></textarea>
+                                <input type="hidden" name="postID" value="@post.PostID" class="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <input type="submit" value="Reply" class="btn btn-primary btn-login text-uppercase fw-bold" />
+                            </div>
+                        </form>
                     </div>
                 </div>
             }
         </div>
     </div>
 </div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <h5 class="modal-title text-center mb-3" id="exampleModalLabel">Friend Requests</h5>
+                @if (appUser.ReceivedFriendRequests != null)
+                {
+                    @foreach (var friendRequest in appUser.ReceivedFriendRequests)
+                    {
+                        <div class="container">
+                            <div class="row justify-content-between mt-2">
+                                <div class=col-8>
+                                    <div class="row justify-content-start">
+                                        <div class="col-3 p-0">
+                                            <img src="@Url.Content("https://userprofileimgs3655612.s3.ap-southeast-2.amazonaws.com/" + @friendRequest.AppUserID)" alt="Image" style="width: 60px; height: 60px;" />
+                                        </div>
+                                        <div class="col-9 p-0">
+                                            <form asp-controller="AppUser" asp-action="PublicProfile">
+                                                <input type="hidden" name="appUserID" value="@friendRequest.AppUserID" class="form-control" />
+                                                <input type="submit" class="no-button-style fw-bold" value="@friendRequest.Name" />
+                                                <p>@friendRequest.City, @friendRequest.Country</p>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-4 ps-4 pe-0 mt-1">
+                                    <form asp-controller="AppUser" asp-action="ConfirmFriendRequest">
+                                        <input type="hidden" name="senderID" value="@friendRequest.AppUserID" class="form-control" />
+                                        <button type="submit" name="accept" value="true" class="btn btn-primary fw-bold">Confirm</button>
+                                        <button type="submit" name="accept" value="false" class="btn-close"></button>
+                                    </form>
+
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+            <div class="modal-body">
+                <h5 class="modal-title text-center mb-3" id="exampleModalLabel">Pending Requests</h5>
+                @if (appUser.ReceivedFriendRequests != null)
+                {
+                    @foreach (var friendRequest in appUser.SentFriendRequests)
+                    {
+                        <div class="container">
+                            <div class="row justify-content-between mt-2">
+                                <div class=col-8>
+                                    <div class="row justify-content-start">
+                                        <div class="col-3 p-0">
+                                            <img src="@Url.Content("https://userprofileimgs3655612.s3.ap-southeast-2.amazonaws.com/" + @friendRequest.AppUserID)" alt="Image" style="width: 60px; height: 60px;" />
+                                        </div>
+                                        <div class="col-9 p-0">
+                                            <form asp-controller="AppUser" asp-action="PublicProfile">
+                                                <input type="hidden" name="appUserID" value="@friendRequest.AppUserID" class="form-control" />
+                                                <input type="submit" class="no-button-style fw-bold" value="@friendRequest.Name" />
+                                                <p>@friendRequest.City, @friendRequest.Country</p>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-4 ps-4 pe-0 mt-1">
+                                    <form asp-controller="AppUser" asp-action="RemovePendingRequest">
+                                    <input type="hidden" name="receiverID" value="@friendRequest.AppUserID" class="form-control" />
+                                    <button type="submit" class="btn btn-secondary fw-bold">Remove</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
 @*<img src="@Url.Content("https://userprofileimgs3655612.s3.ap-southeast-2.amazonaws.com/" + @appUser.AppUserID)" alt="Image" style="width: 60px; height: 60px;" />*@

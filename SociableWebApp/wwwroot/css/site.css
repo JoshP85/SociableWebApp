@@ -19,6 +19,14 @@ body {
     background-color: lightseagreen;
 }
 
+.no-button-style {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    padding: 0px;
+}
+
 p{
     color:black;
 }
@@ -28,10 +36,16 @@ p{
     color: darkgray
 }
 
-card{
+.modal-title {
+    font-family: 'Oleo Script Swash Caps', cursive;
+    font-size: 40px;
+}
+
+card {
     background-color: white;
 }
-label{
+
+label {
     opacity: 0.7;
 }
 
@@ -55,3 +69,4 @@ input::-webkit-inner-spin-button {
 input[type=number] {
     -moz-appearance: textfield;
 }
+

@@ -44,7 +44,12 @@ namespace SociableWebApp.Controllers
 
                 postList.Add(post);
             }
+            /*            AppUser appuser = AppUser.GetAppUser(dynamoDBContext, AppUserID);
+                        var friendRequestList = new List<string>();
+                        foreach (var friendRequest in appuser.ReceivedFriendRequests)
+                        {
 
+                        }*/
             ViewBag.Posts = postList;
 
             ViewBag.AppUser = AppUser.GetAppUser(dynamoDBContext, AppUserID);

@@ -39,17 +39,26 @@ namespace SociableWebApp.Models
         public string? Country { get; set; }
 
         [DynamoDBProperty]
-        public string? ProfileImgUrl { get; set; }
-
-        [DynamoDBProperty]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
         public string AccCreatedDate { get; set; }
 
         [DynamoDBProperty]
         public string AccUpdatedDate { get; set; }
 
+        [DynamoDBIgnore]
+        public string UserImageFile { get; set; }
+
         [DynamoDBProperty]
-        public List<string> PostIDs { get; set; }
+        public List<Post> Posts { get; set; }
+
+        [DynamoDBProperty]
+        public virtual List<Friend> Friends { get; set; }
+
+        [DynamoDBProperty]
+        public virtual List<FriendRequest> SentFriendRequests { get; set; }
+
+        [DynamoDBProperty]
+        public virtual List<FriendRequest> ReceivedFriendRequests { get; set; }
 
 
         public static AppUser GetAppUser(IDynamoDBContext dynamoDBContext, string userID) => dynamoDBContext.LoadAsync<AppUser>(userID).Result;
@@ -70,6 +79,8 @@ namespace SociableWebApp.Models
             await dynamoDBContext.SaveAsync(appUser);
             return true;
         }
+
+
     }
 
 

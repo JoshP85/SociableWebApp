@@ -1,8 +1,9 @@
 ﻿using Amazon.DynamoDBv2;
-using Amazon.DynamoDBv2.Model;
+using Amazon.DynamoDBv2.DataModel;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Newtonsoft.Json;
+using SociableWebApp.Models;
 
 namespace SociableWebApp.Data
 {
@@ -22,26 +23,25 @@ namespace SociableWebApp.Data
                 string profileImgurl = item.profileImgUrl.ToString();
                 string userID = item.id.ToString();
 
-
                 await UploadToS3(profileImgurl, userID, clientS3);
 
-                var requestSeed = new PutItemRequest
+                DynamoDBContext context = new DynamoDBContext(client);
+                AppUser appUser = new AppUser
                 {
-                    TableName = "AppUsers",
-                    Item = new Dictionary<string, AttributeValue>()
-                    {
-                        { "AppUserID", new AttributeValue {S = item.id } },
-                        { "Email", new AttributeValue {S = item.email } },
-                        { "Password", new AttributeValue {S = item.password } },
-                        { "Name", new AttributeValue {S = item.name } },
-                        { "PhoneNumber", new AttributeValue {S = item.phone } },
-                        { "City", new AttributeValue {S = item.city}},
-                        { "Country", new AttributeValue {S = item.country}},
-                        { "AccCreatedDate", new AttributeValue {S = item.accCreatedDate}},
-                        { "AccUpdatedDate", new AttributeValue {S = item.accUpdatedDate}},
-                    }
+                    AppUserID = item.id,
+                    Email = item.email,
+                    Password = item.password,
+                    Name = item.name,
+                    PhoneNumber = item.phone,
+                    City = item.city,
+                    Country = item.country,
+                    AccCreatedDate = item.accCreatedDate,
+                    AccUpdatedDate = item.accUpdatedDate,
+                    ReceivedFriendRequests = new List<FriendRequest> { },
+                    SentFriendRequests = new List<FriendRequest> { },
+                    Friends = new List<Friend> { },
                 };
-                await client.PutItemAsync(requestSeed);
+                await context.SaveAsync(appUser);
             }
             return;
         }

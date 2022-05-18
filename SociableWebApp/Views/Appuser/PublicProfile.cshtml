@@ -1,0 +1,97 @@
+﻿@model SociableWebApp.ViewModels.PublicProfileViewModel
+
+@{
+    ViewData["Title"] = "PublicProfile";
+    var isUserAFriend = ViewBag.IsUserAFriend;
+    var currentUser = ViewBag.CurrentUser;
+    var isUserCurrentUser = ViewBag.IsUserCurrentUser;
+}
+
+<h1>Public Profile</h1>
+
+<div>
+    <h4>@Model.OwnerOfProfile.Name</h4>
+    <hr />
+    <dl class="row">
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.OwnerOfProfile.Email)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.OwnerOfProfile.Email)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.OwnerOfProfile.Name)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.OwnerOfProfile.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.OwnerOfProfile.City)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.OwnerOfProfile.City)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.OwnerOfProfile.Country)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.OwnerOfProfile.Country)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.OwnerOfProfile.AccCreatedDate)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.OwnerOfProfile.AccCreatedDate)
+        </dd>
+    </dl>
+</div>
+
+@if (Model.IsOwnerAFriend)
+{
+    <div>
+        <form asp-controller="AppUser" asp-action="Unfriend">
+            <input type="hidden" name="removeFriendID" value="@Model.OwnerOfProfile.AppUserID" class="form-control" />
+            <button type="submit" class="btn btn-secondary fw-bold">Unfriend</button>
+        </form>
+    </div>
+}
+
+@if (Model.IsOwnerCurrentSessionUser)
+{
+
+}
+
+@if (!Model.IsOwnerAFriend && !Model.IsOwnerCurrentSessionUser && !Model.IsRelationshipPending && !Model.IsRelationshipNotConfirmed)
+{
+    <div>
+        <form asp-controller="AppUser" asp-action="SendFriendRequest">
+            <input type="hidden" asp-for="@Model.OwnerOfProfile.AppUserID" name="receiverID" class="form-control" />
+            <b><input type="submit" class="btn btn-primary fw-bold" value="Add Friend" /></b>
+        </form>
+    </div>
+}
+
+@if (Model.IsRelationshipPending)
+{
+    <div>
+        <form asp-controller="AppUser" asp-action="RemovePendingRequest">
+            <input type="hidden" name="receiverID" value="@Model.OwnerOfProfile.AppUserID" class="form-control" />
+            <b><input type="submit" value="Cancel Request" /></b>
+        </form>
+    </div>
+}
+@if (Model.IsRelationshipNotConfirmed)
+{
+    <div>
+        <form asp-controller="AppUser" asp-action="ConfirmFriendRequest">
+            <input type="hidden" name="senderID" value="@Model.OwnerOfProfile.AppUserID" class="form-control" />
+            <button type="submit" name="accept" value="true" class="btn btn-primary fw-bold">Confirm</button>
+            <button type="submit" name="accept" value="false" class="btn-close"></button>
+        </form>
+    </div>
+}
+
+<div>
+    <a asp-controller="NewsFeed" asp-action="Newsfeed">Back to List</a>
+</div>
