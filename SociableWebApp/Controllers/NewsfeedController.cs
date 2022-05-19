@@ -1,5 +1,6 @@
 ﻿using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
+using Amazon.S3;
 using Microsoft.AspNetCore.Mvc;
 using SociableWebApp.ExtensionMethods;
 using SociableWebApp.Models;
@@ -15,11 +16,13 @@ namespace SociableWebApp.Controllers
         private string AppUserID => HttpContext.Session.GetString(nameof(AppUser.AppUserID));
         private readonly IDynamoDBContext dynamoDBContext;
         private readonly IAmazonDynamoDB client;
+        private readonly IAmazonS3 clientS3;
 
-        public NewsfeedController(IDynamoDBContext dynamoDBContext, IAmazonDynamoDB client)
+        public NewsfeedController(IDynamoDBContext dynamoDBContext, IAmazonDynamoDB client, IAmazonS3 clientS3)
         {
             this.dynamoDBContext = dynamoDBContext;
             this.client = client;
+            this.clientS3 = clientS3;
         }
 
         public async Task<ActionResult> NewsFeedAsync()
@@ -56,11 +59,11 @@ namespace SociableWebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> NewPostAsync([Bind("PostContent")] Post newPost)
+        public async Task<ActionResult> NewPostAsync([Bind("PostContent, MessageImageFile")] Post newPost)
         {
             var user = AppUser.GetAppUser(dynamoDBContext, AppUserID);
 
-            await Post.NewPostAsync(dynamoDBContext, newPost, user);
+            await Post.NewPostAsync(dynamoDBContext, newPost, user, clientS3);
 
             return RedirectToAction("Newsfeed", "NewsFeed");
         }

@@ -43,9 +43,12 @@ namespace SociableWebApp.Controllers
                 {
                     return View(AppUser.GetAppUser(dynamoDBContext, AppUserID));
                 }*/
-
         public ActionResult PublicProfile(string appUserID)
         {
+            if (appUserID == null)
+            {
+                appUserID = AppUserID;
+            }
             var user = AppUser.GetAppUser(dynamoDBContext, AppUserID);
 
             var PublicProfileViewModel = new PublicProfileViewModel

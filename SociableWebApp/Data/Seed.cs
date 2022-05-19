@@ -40,6 +40,7 @@ namespace SociableWebApp.Data
                     ReceivedFriendRequests = new List<FriendRequest> { },
                     SentFriendRequests = new List<FriendRequest> { },
                     Friends = new List<Friend> { },
+                    PostIDs = new List<string> { },
                 };
                 await context.SaveAsync(appUser);
             }

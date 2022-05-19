@@ -1,4 +1,6 @@
 ﻿using Amazon.DynamoDBv2.DataModel;
+using Amazon.S3;
+using Amazon.S3.Model;
 
 namespace SociableWebApp.Models
 {
@@ -36,6 +38,12 @@ namespace SociableWebApp.Models
         [DynamoDBProperty]
         public string? PostMediaUrl { get; set; }
 
+        [DynamoDBIgnore]
+        public IFormFile MessageImageFile { get; set; }
+
+        [DynamoDBProperty]
+        public bool PostHasImage { get; set; }
+
         [DynamoDBProperty]
         public int VoteTotal { get; set; }
 
@@ -50,10 +58,12 @@ namespace SociableWebApp.Models
 
         public static Post GetPost(IDynamoDBContext dynamoDBContext, string postID) => dynamoDBContext.LoadAsync<Post>(postID).Result;
 
-        public static async Task NewPostAsync(IDynamoDBContext dynamoDBContext, Post newPost, AppUser user)
+        public static async Task NewPostAsync(IDynamoDBContext dynamoDBContext, Post newPost, AppUser user, IAmazonS3 clientS3)
         {
             if (newPost.PostMediaUrl == null)
                 newPost.PostMediaUrl = "";
+
+            bool hasImage = newPost.MessageImageFile != null;
 
             Post post = new()
             {
@@ -63,9 +73,29 @@ namespace SociableWebApp.Models
                 PostContent = newPost.PostContent,
                 PostDate = newPost.PostDate,
                 PostMediaUrl = newPost.PostMediaUrl,
+                PostHasImage = hasImage,
             };
 
             await dynamoDBContext.SaveAsync(post);
+
+            user.PostIDs.Add(post.PostID);
+
+            await dynamoDBContext.SaveAsync(user);
+
+            if (newPost.MessageImageFile != null)
+            {
+                Stream fileStream = newPost.MessageImageFile.OpenReadStream();
+
+                var request = new PutObjectRequest
+                {
+                    CannedACL = S3CannedACL.PublicRead,
+                    BucketName = "postimages3655612",
+                    Key = post.PostID,
+                    ContentType = "image/jpeg",
+                    InputStream = fileStream,
+                };
+                PutObjectResponse response = await clientS3.PutObjectAsync(request);
+            }
         }
     }
 }

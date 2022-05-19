@@ -47,8 +47,7 @@ p{
 }
 
 .card, .list-group-item {
-    /*background-color: white;*/
-    background-color: whitesmoke;
+    background-color: #FCFCFC;
 }
 
 label {
@@ -104,18 +103,22 @@ textarea {
 }
 #txtarea {
     border-radius: 25px;
-    background-color: whitesmoke;
+    background-color: #FCFCFC;
 }
 .post-area {
-    /*background-color: whitesmoke;*/
     background-color: white;
 }
 
 .comment-area {
-    /*background-color: gainsboro;*/
-    background-color: whitesmoke;
+    background-color: #FCFCFC;
 }
 
 .rounded-corners {
     border-radius: 25px;
+}
+
+.white {
+    border-radius: 10px;
+    border-style: solid;
+    background-color: white;
 }

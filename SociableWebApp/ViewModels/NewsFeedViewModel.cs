@@ -10,6 +10,6 @@ namespace SociableWebApp.ViewModels
         public AppUser AppUser { get; set; }
 
         public string PostContent { get; set; }
-        public string? PostMediaUrl { get; set; }
+        public string? MessageImageFile { get; set; }
     }
 }
