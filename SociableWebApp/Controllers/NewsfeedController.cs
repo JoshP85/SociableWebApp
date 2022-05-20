@@ -1,9 +1,10 @@
 ﻿using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
+using Amazon.S3;
 using Microsoft.AspNetCore.Mvc;
-using SociableWebApp.ExtensionMethods;
 using SociableWebApp.Models;
 using SociableWebApp.Session;
+using SociableWebApp.ViewModels;
 
 namespace SociableWebApp.Controllers
 {
@@ -14,55 +15,38 @@ namespace SociableWebApp.Controllers
         private string AppUserID => HttpContext.Session.GetString(nameof(AppUser.AppUserID));
         private readonly IDynamoDBContext dynamoDBContext;
         private readonly IAmazonDynamoDB client;
+        private readonly IAmazonS3 clientS3;
 
-        public NewsfeedController(IDynamoDBContext dynamoDBContext, IAmazonDynamoDB client)
+        public NewsfeedController(IDynamoDBContext dynamoDBContext, IAmazonDynamoDB client, IAmazonS3 clientS3)
         {
             this.dynamoDBContext = dynamoDBContext;
             this.client = client;
+            this.clientS3 = clientS3;
         }
 
         public async Task<ActionResult> NewsFeedAsync()
         {
-            var postList = new List<Post>();
             var conditions = new List<ScanCondition>();
-
             //TODO: Condition to be only friends posts are returned
             var posts = await dynamoDBContext.ScanAsync<Post>(conditions).GetRemainingAsync();
 
-            posts.Sort((x, y) => -x.PostDate.ConvertStringToDateTime().CompareTo(y.PostDate.ConvertStringToDateTime()));
+            var postList = Post.SortAndDatePosts(posts);
 
-            foreach (var post in posts)
+            NewsFeedViewModel newsfeedVM = new NewsFeedViewModel()
             {
-                post.TimeSincePost = post.PostDate.GetTimeSince(DateTime.UtcNow);
+                Posts = postList,
+                AppUser = AppUser.GetAppUser(dynamoDBContext, AppUserID)
+            };
 
-                foreach (var comment in post.Comments)
-                {
-                    comment.TimeSinceComment = comment.CommentDate.GetTimeSince(DateTime.UtcNow);
-
-                }
-                post.Comments.Sort((x, y) => x.CommentDate.ConvertStringToDateTime().CompareTo(y.CommentDate.ConvertStringToDateTime()));
-
-                postList.Add(post);
-            }
-            /*            AppUser appuser = AppUser.GetAppUser(dynamoDBContext, AppUserID);
-                        var friendRequestList = new List<string>();
-                        foreach (var friendRequest in appuser.ReceivedFriendRequests)
-                        {
-
-                        }*/
-            ViewBag.Posts = postList;
-
-            ViewBag.AppUser = AppUser.GetAppUser(dynamoDBContext, AppUserID);
-
-            return View();
+            return View(newsfeedVM);
         }
 
         [HttpPost]
-        public async Task<ActionResult> NewPostAsync([Bind("PostContent")] Post newPost)
+        public async Task<ActionResult> NewPostAsync([Bind("PostContent, MessageImageFile")] Post newPost)
         {
             var user = AppUser.GetAppUser(dynamoDBContext, AppUserID);
 
-            await Post.NewPostAsync(dynamoDBContext, newPost, user);
+            await Post.NewPostAsync(dynamoDBContext, newPost, user, clientS3);
 
             return RedirectToAction("Newsfeed", "NewsFeed");
         }

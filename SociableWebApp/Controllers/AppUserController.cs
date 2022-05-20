@@ -23,39 +23,48 @@ namespace SociableWebApp.Controllers
             this.clientS3 = clientS3;
         }
 
-
-        public ActionResult Profile()
+        public ActionResult Profile(string appUserID)
         {
-            var appuser = AppUser.GetAppUser(dynamoDBContext, AppUserID);
+            if (appUserID == null && TempData["userOfProfile"] == null)
+            {
+                appUserID = AppUserID;
+            }
+
+            if (TempData["userOfProfile"] != null)
+            {
+                appUserID = TempData["userOfProfile"].ToString();
+            }
+
+            var user = AppUser.GetAppUser(dynamoDBContext, AppUserID);
+
+            var ownerOfProfile = AppUser.GetAppUser(dynamoDBContext, appUserID);
+
             var friends = new List<AppUser>();
 
-            foreach (var friend in appuser.Friends)
+            foreach (var friend in ownerOfProfile.Friends)
             {
                 friends.Add(AppUser.GetAppUser(dynamoDBContext, friend.FriendID));
             }
 
-            ViewBag.Friends = friends;
+            var posts = new List<Post>();
 
-            return View(appuser);
-        }
+            foreach (var postID in ownerOfProfile.PostIDs)
+            {
+                posts.Add(Post.GetPost(dynamoDBContext, postID));
+            }
 
-        /*        public ActionResult PublicProfile()
-                {
-                    return View(AppUser.GetAppUser(dynamoDBContext, AppUserID));
-                }*/
-
-        public ActionResult PublicProfile(string appUserID)
-        {
-            var user = AppUser.GetAppUser(dynamoDBContext, AppUserID);
+            var postList = Post.SortAndDatePosts(posts);
 
             var PublicProfileViewModel = new PublicProfileViewModel
             {
-                OwnerOfProfile = AppUser.GetAppUser(dynamoDBContext, appUserID),
+                OwnerOfProfile = ownerOfProfile,
                 CurrentUser = user,
                 IsOwnerAFriend = user.Friends.Any(friend => friend.FriendID == appUserID),
                 IsRelationshipPending = user.SentFriendRequests.Any(x => x.AppUserID == appUserID),
                 IsRelationshipNotConfirmed = user.ReceivedFriendRequests.Any(x => x.AppUserID == appUserID),
                 IsOwnerCurrentSessionUser = (appUserID == AppUserID),
+                OwnerOfProfileFriends = friends,
+                OwnerOfProfilePosts = postList,
             };
 
             return View(PublicProfileViewModel);
@@ -64,8 +73,10 @@ namespace SociableWebApp.Controllers
         public ActionResult SendFriendRequest(string receiverID)
         {
             FriendRequest.CreateFriendRequest(dynamoDBContext, AppUserID, receiverID);
-            // string senderID = AppUserID;
-            return RedirectToAction("NewsFeed", "NewsFeed");
+
+            TempData["userOfProfile"] = receiverID;
+
+            return RedirectToAction("Profile", "AppUser");
         }
 
         public ActionResult Create()
@@ -73,19 +84,31 @@ namespace SociableWebApp.Controllers
             return View();
         }
 
-        public async Task<ActionResult> ConfirmFriendRequestAsync(string senderID, bool accept)
+        public async Task<ActionResult> ConfirmFriendRequestAsync(string senderID, bool accept, bool fromProfile)
         {
             if (accept)
                 await Friend.AddNewFriendAsync(dynamoDBContext, senderID, AppUserID);
             else
                 await FriendRequest.RemoveRequestAsync(dynamoDBContext, senderID, AppUserID);
 
+            if (fromProfile)
+            {
+                TempData["userOfProfile"] = senderID;
+                return RedirectToAction("Profile", "AppUser");
+            }
+
             return RedirectToAction("NewsFeed", "NewsFeed");
         }
 
-        public async Task<ActionResult> RemovePendingRequest(string receiverID)
+        public async Task<ActionResult> RemovePendingRequest(string receiverID, bool fromProfile)
         {
             await FriendRequest.RemoveRequestAsync(dynamoDBContext, AppUserID, receiverID);
+
+            if (fromProfile)
+            {
+                TempData["userOfProfile"] = receiverID;
+                return RedirectToAction("Profile", "AppUser");
+            }
 
             return RedirectToAction("NewsFeed", "NewsFeed");
         }
@@ -93,6 +116,8 @@ namespace SociableWebApp.Controllers
         public async Task<ActionResult> Unfriend(string removeFriendID)
         {
             await Friend.Unfriend(dynamoDBContext, AppUserID, removeFriendID);
+
+            TempData["userOfProfile"] = removeFriendID;
 
             return RedirectToAction("Profile", "AppUser");
         }

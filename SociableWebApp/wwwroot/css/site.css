@@ -15,7 +15,6 @@ html {
 }
 
 body {
-    margin-bottom: 60px;
     background-color: lightseagreen;
 }
 
@@ -27,12 +26,18 @@ body {
     padding: 0px;
 }
 
-p{
+p, a{
     color:black;
+    text-decoration: none;
 }
 .heading {
     font-family: 'Oleo Script Swash Caps', cursive;
     font-size: 110px;
+    color: darkgray
+}
+.headingFeed {
+    font-family: 'Oleo Script Swash Caps', cursive;
+    font-size: 90px;
     color: darkgray
 }
 
@@ -41,10 +46,43 @@ p{
     font-size: 40px;
 }
 
-card {
-    background-color: white;
+.card, .list-group-item {
+    background-color: #FCFCFC;
+    min-width: 400px;
 }
 
+.profile-view{
+    width: 60%;
+    height: auto;
+    min-height: 100vh;
+    min-width: 375px;
+}
+
+@media only screen and (max-width: 1400px) {
+    .profile-view {
+        width: 60%;
+    }
+}
+@media only screen and (max-width: 1200px) {
+    .profile-view {
+        width: 70%;
+    }
+}
+@media only screen and (max-width: 995px) {
+    .profile-view {
+        width: 80%;
+    }
+}
+@media only screen and (max-width: 768px) {
+    .profile-view {
+        width: 90%;
+    }
+}
+@media only screen and (max-width: 576px) {
+    .profile-view {
+        width: 100%;
+    }
+}
 label {
     opacity: 0.7;
 }
@@ -54,8 +92,12 @@ label {
     font-size: smaller;
 }
 
-*:focus {
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
     outline: none;
+    box-shadow: none;
 }
 /*<--- Hide arrows from number input --->*/
 /* Chrome, Safari, Edge, Opera */
@@ -70,3 +112,51 @@ input[type=number] {
     -moz-appearance: textfield;
 }
 
+.scroll {
+    height: 100vh;
+    overflow-y: scroll;
+}
+ /*Hide scrollbar for Chrome, Safari and Opera */
+    .scroll::-webkit-scrollbar {
+        display: none;
+    }
+
+ /*Hide scrollbar for IE, Edge and Firefox */
+.scroll {
+    -ms-overflow-style: none; /*IE and Edge */
+    scrollbar-width: none; /*Firefox*/
+}
+
+textarea {
+    border: none;
+    background-color: transparent;
+    resize: none;
+    outline: none;
+    border-radius: 25px;
+}
+#txtarea {
+    border-radius: 25px;
+    background-color: #FCFCFC;
+}
+.post-area {
+    background-color: white;
+    
+}
+
+.comment-area {
+    background-color: #FCFCFC;
+}
+
+.rounded-corners {
+    border-radius: 25px;
+}
+
+.white {
+    border-radius: 10px;
+    border-style: solid;
+    background-color: white;
+}
+
+#nav.link, #post-tab, #friends-tab{
+    color: black;
+}

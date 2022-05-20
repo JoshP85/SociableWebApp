@@ -11,6 +11,10 @@ namespace SociableWebApp.Models
             AccCreatedDate = DateTime.Now.ToString();
             AppUserID = Guid.NewGuid().ToString();
             AccUpdatedDate = "";
+            ReceivedFriendRequests = new List<FriendRequest> { };
+            SentFriendRequests = new List<FriendRequest> { };
+            Friends = new List<Friend> { };
+            PostIDs = new List<string> { };
         }
 
         [DynamoDBHashKey]
@@ -49,7 +53,7 @@ namespace SociableWebApp.Models
         public string UserImageFile { get; set; }
 
         [DynamoDBProperty]
-        public List<Post> Posts { get; set; }
+        public List<string> PostIDs { get; set; }
 
         [DynamoDBProperty]
         public virtual List<Friend> Friends { get; set; }

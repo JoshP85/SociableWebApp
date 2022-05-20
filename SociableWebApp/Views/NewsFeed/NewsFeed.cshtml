@@ -1,95 +1,120 @@
-﻿@model SociableWebApp.Models.Post
+﻿@model SociableWebApp.ViewModels.NewsFeedViewModel
 @{
-    var appUser = ViewBag.AppUser;
-    var posts = ViewBag.Posts;
+
 }
 
-<div class="container card border-0 shadow rounded-3 mt-5">
-    <div class="row">
-        <div class="d-flex col-4">
-            <div class="m-3">
-                <div class="text-center">
-                    <img src="@Url.Content("https://userprofileimgs3655612.s3.ap-southeast-2.amazonaws.com/" + @appUser.AppUserID)" alt="Image" style="width: 180px; height: 180px;" />
+<div class="container card border-0 shadow rounded-3 mt-2">
 
-                </div>
+    <div class="row">
+        <div class="d-flex col-12 col-sm-12 col-md-5 col-lg-4 text-center justify-content-center">
+            <div class="m-3">
+                <h1 class="headingFeed d-flex justify-content-center">sociable</h1>
                 <div class="text-center">
-                    <a class="fw-bold" asp-controller="Newsfeed" asp-action="Logout" style="text-decoration:none">Logout</a>
+                    <img src="@Url.Content("https://userprofileimgs3655612.s3.ap-southeast-2.amazonaws.com/" + @Model.AppUser.AppUserID)" class="border border-3 rounded-circle rounded mx-auto d-block" style="height:250px; width:auto" alt="Image" />
                 </div>
-                <ul class="list-group list-group-flush">
-                    <a class="list-group-item border-0" asp-controller="AppUser" asp-action="Profile">@appUser.Name</a>
-                    @*<a class="list-group-item border-0" asp-controller="AppUser" asp-action="PublicProfile">Public Profile</a>*@
-                    @if (@appUser.ReceivedFriendRequests == null)
-                    {
-                        <a class="list-group-item border-0" data-bs-toggle="modal" href="#exampleModal">Friend Requests(0)</a>
-                    }
-                    else
-                    {
-                        <a class="list-group-item border-0" data-bs-toggle="modal" href="#exampleModal">Friend Requests(@appUser.ReceivedFriendRequests.Count)</a>
-                    }
-                    <li class="list-group-item border-0">@appUser.Email</li>
-                    <li class="list-group-item border-0">@appUser.City, @appUser.Country</li>
-                </ul>
+                <div class="dropdown">
+                    <button class="no-button-style dropdown-toggle fs-2" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                        @Model.AppUser.Name
+                    </button>
+                    <ul class="dropdown-menu white" aria-labelledby="dropdownMenuButton1">
+                        <li><a class="white list-group-item border-0 fs-5" asp-controller="AppUser" asp-action="Profile">Profile</a></li>
+                        <li><a class="white list-group-item border-0 fs-5" asp-controller="Newsfeed" asp-action="Logout">Logout</a></li>
+                    </ul>
+                </div>
+                <a class="fs-5" data-bs-toggle="modal" href="#exampleModal" style="text-decoration:none; color:black;">Friend Requests (@Model.AppUser.ReceivedFriendRequests.Count)</a>
+
+
             </div>
         </div>
-        <div class="d-flex flex-column col m-3">
-            <form asp-controller="NewsFeed" asp-action="NewPost">
+
+        <div class="d-flex flex-column col m-3 mt-4 scroll">
+            <form asp-controller="NewsFeed" asp-action="NewPost" enctype="multipart/form-data">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <div class="form-group">
-                    @*TODO: Make media uploading possible*@
-                    <input type="hidden" asp-for="PostMediaUrl" class="form-control" />
-                </div>
-                <div class="form-group">
-                    <textarea asp-for="PostContent" rows="2" placeholder="Whats on your mind..." class="form-control"></textarea>
-                </div>
-                <div class="form-group">
-                    <input type="submit" value="Post" class="btn btn-primary btn-login text-uppercase fw-bold" />
+                <div class="container">
+
+                    <div class="form-group col-12">
+                        <textarea asp-for="@Model.PostContent" rows="2" placeholder="Whats on your mind..." class="form-control"></textarea>
+                    </div>
+                    <div class="form-group row justify-content-start mb-3 offset-lg-2 offset-md-0 offset-sm-2 offset-1">
+                        <div class="col-8 col-lg-8 col-md-9 col-sm-8 p-0">
+                            <label for="formFileSm" class="form-label"></label>
+                            <input class="form-control form-control-sm" asp-for="@Model.MessageImageFile" id="formFileSm" type="file">
+                        </div>
+
+                        <div class="col-2 m-0 mt-3 p-0 ps-2">
+                            <input type="submit" value="Post" class="btn btn-primary text-uppercase fw-bold" />
+                        </div>
+                    </div>
                 </div>
             </form>
-            @foreach (var post in posts)
+
+            @foreach (var post in @Model.Posts)
             {
-                <hr />
-                <div class="col-10 mb-3">
-                    <div class="d-flex flex-row mb-1">
-                        <img src="@Url.Content("https://userprofileimgs3655612.s3.ap-southeast-2.amazonaws.com/" + @post.PostAuthorID)" alt="Image" style="width: 40px; height: 40px;" />
-                        <div class="ms-4 mt-2">
-                            <form asp-controller="AppUser" asp-action="PublicProfile">
+                <div class="col vw-90 mb-3 rounded-corners post-area">
+                    <div class="d-flex flex-row m-2">
+                        <img src="@Url.Content("https://userprofileimgs3655612.s3.ap-southeast-2.amazonaws.com/" + @post.PostAuthorID)" class="img-fluid rounded-circle border border-1" alt="Image" style="width: 60px; height: 60px;" />
+                        <div class="ms-4 mt-1 ">
+                            <form asp-controller="AppUser" asp-action="Profile">
                                 <input type="hidden" name="appUserID" value="@post.PostAuthorID" class="form-control" />
-                                <input type="submit" class="no-button-style fw-bold" value="@post.PostAuthorName" />
+                                <input type="submit" class="no-button-style fw-bold fs-4" value="@post.PostAuthorName" />
+                                <div class="fs-6 fw-lighter lh-1">
+                                    @post.TimeSincePost
+                                </div>
+                                <div class="mt-1 fs-5">
+                                    @post.PostContent
+                                </div>
+                                <div>
+                                    @if (post.PostHasImage)
+                                    {
+                                        <img src="@Url.Content("https://postimages3655612.s3.ap-southeast-2.amazonaws.com/" + @post.PostID)" class=" border border-1" style="height:auto; width:100%;" alt="Image" />
+                                    }
+                                </div>
+                                <div class="fs-6 mt-3">
+                                    <a data-bs-toggle="collapse" href="#b\\@post.PostID" role="button" aria-expanded="false" aria-controls="b\@post.PostID" style="text-decoration:none">
+                                        Comments(@post.Comments.Count)
+                                    </a>
+                                </div>
                             </form>
                         </div>
-                        <div class="ms-2 mt-2">
-                            @post.TimeSincePost
-                        </div>
                     </div>
-                    <div>
-                        @post.PostContent
-                    </div>
-                    <p>
-                        <a data-bs-toggle="collapse" href="#b\\@post.PostID" role="button" aria-expanded="false" aria-controls="b\@post.PostID" style="text-decoration:none">
-                            Comments(@post.Comments.Count)
-                        </a>
-                    </p>
+
                     <div class="collapse" id="b\@post.PostID">
 
                         @foreach (var comment in post.Comments)
                         {
-                            <div class="col-10">
-                                <img src="@Url.Content("https://userprofileimgs3655612.s3.ap-southeast-2.amazonaws.com/" + @comment.CommentAuthorID)" alt="Image" style="width: 40px; height: 40px;" />
-                                <b>@comment.CommentAuthorName</b>
-                                @comment.TimeSinceComment
-                                <div>
-                                    @comment.CommentContent
+                            <div class="col-10 offset-2 mt-3">
+                                <div class="d-flex flex-row m-2 ms-0 ">
+                                    <img src="@Url.Content("https://userprofileimgs3655612.s3.ap-southeast-2.amazonaws.com/" + @comment.CommentAuthorID)" class="img-fluid rounded-circle border border-1" alt="Image" style="width: 45px; height: 45px;" />
+                                    <div class="ms-2 w-100 rounded-corners comment-area">
+                                        <div class="ms-4 mt-2 mb-2">
+                                            <form asp-controller="AppUser" asp-action="Profile">
+                                                <div class="fw-lighter lh-1">
+                                                    <input type="hidden" name="appUserID" value="@comment.CommentAuthorID" class="form-control" />
+                                                    <input type="submit" class="no-button-style fw-bold" value="@comment.CommentAuthorName" />
+                                                    @comment.TimeSinceComment
+                                                </div>
+                                                <div class="mt-2 fs-6">
+                                                    @comment.CommentContent
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         }
+
                         <form asp-controller="NewsFeed" asp-action="NewComment">
-                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                            <div class="form-group">
-                                <textarea name="commentContent" rows="1" placeholder="Reply to @post.PostAuthorName" class="form-control"></textarea>
-                                <input type="hidden" name="postID" value="@post.PostID" class="form-control" />
-                            </div>
-                            <div class="form-group">
-                                <input type="submit" value="Reply" class="btn btn-primary btn-login text-uppercase fw-bold" />
+                            <div class="container">
+
+                                <div class="form-group row justify-content-start ms-4">
+                                    <div class="col-8 offset-2">
+                                        <textarea id="txtarea" style="outline: none;" name="commentContent" rows="1" placeholder="Reply to @post.PostAuthorName" class="form-control"></textarea>
+                                        <input type="hidden" name="postID" value="@post.PostID" class="form-control" />
+                                    </div>
+                                    <div class="col-2 p-0 mb-3">
+                                        <input type="submit" value="Reply" class="btn btn-primary fw-bold" />
+                                    </div>
+                                </div>
                             </div>
                         </form>
                     </div>
@@ -105,10 +130,19 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-body">
-                <h5 class="modal-title text-center mb-3" id="exampleModalLabel">Friend Requests</h5>
-                @if (appUser.ReceivedFriendRequests != null)
+                <h5 class="modal-title text-center " id="exampleModalLabel">Friend Requests</h5>
+                @if (Model.AppUser.ReceivedFriendRequests != null)
                 {
-                    @foreach (var friendRequest in appUser.ReceivedFriendRequests)
+                    @if (Model.AppUser.ReceivedFriendRequests.Count == 1)
+                    {
+                        <p class="text-center mt-0 mb-3">You have 1 friend request</p>
+                    }
+                    else
+                    {
+                        <p class="text-center mt-0 mb-3">You have @Model.AppUser.ReceivedFriendRequests.Count friend requests</p>
+                    }
+
+                    @foreach (var friendRequest in Model.AppUser.ReceivedFriendRequests)
                     {
                         <div class="container">
                             <div class="row justify-content-between mt-2">
@@ -118,7 +152,7 @@
                                             <img src="@Url.Content("https://userprofileimgs3655612.s3.ap-southeast-2.amazonaws.com/" + @friendRequest.AppUserID)" alt="Image" style="width: 60px; height: 60px;" />
                                         </div>
                                         <div class="col-9 p-0">
-                                            <form asp-controller="AppUser" asp-action="PublicProfile">
+                                            <form asp-controller="AppUser" asp-action="Profile">
                                                 <input type="hidden" name="appUserID" value="@friendRequest.AppUserID" class="form-control" />
                                                 <input type="submit" class="no-button-style fw-bold" value="@friendRequest.Name" />
                                                 <p>@friendRequest.City, @friendRequest.Country</p>
@@ -140,10 +174,18 @@
                 }
             </div>
             <div class="modal-body">
-                <h5 class="modal-title text-center mb-3" id="exampleModalLabel">Pending Requests</h5>
-                @if (appUser.ReceivedFriendRequests != null)
+                <h5 class="modal-title text-center" id="exampleModalLabel">Pending Requests</h5>
+                @if (Model.AppUser.SentFriendRequests != null)
                 {
-                    @foreach (var friendRequest in appUser.SentFriendRequests)
+                    @if (Model.AppUser.SentFriendRequests.Count == 1)
+                    {
+                        <p class="text-center mt-0 mb-3">You have 1 friend request waiting for approval</p>
+                    }
+                    else
+                    {
+                        <p class="text-center mt-0 mb-3">You have @Model.AppUser.SentFriendRequests.Count friend requests waiting for approval</p>
+                    }
+                    @foreach (var friendRequest in Model.AppUser.SentFriendRequests)
                     {
                         <div class="container">
                             <div class="row justify-content-between mt-2">
@@ -153,7 +195,7 @@
                                             <img src="@Url.Content("https://userprofileimgs3655612.s3.ap-southeast-2.amazonaws.com/" + @friendRequest.AppUserID)" alt="Image" style="width: 60px; height: 60px;" />
                                         </div>
                                         <div class="col-9 p-0">
-                                            <form asp-controller="AppUser" asp-action="PublicProfile">
+                                            <form asp-controller="AppUser" asp-action="Profile">
                                                 <input type="hidden" name="appUserID" value="@friendRequest.AppUserID" class="form-control" />
                                                 <input type="submit" class="no-button-style fw-bold" value="@friendRequest.Name" />
                                                 <p>@friendRequest.City, @friendRequest.Country</p>
@@ -163,8 +205,8 @@
                                 </div>
                                 <div class="col-4 ps-4 pe-0 mt-1">
                                     <form asp-controller="AppUser" asp-action="RemovePendingRequest">
-                                    <input type="hidden" name="receiverID" value="@friendRequest.AppUserID" class="form-control" />
-                                    <button type="submit" class="btn btn-secondary fw-bold">Remove</button>
+                                        <input type="hidden" name="receiverID" value="@friendRequest.AppUserID" class="form-control" />
+                                        <button type="submit" class="btn btn-secondary fw-bold">Remove</button>
                                     </form>
                                 </div>
                             </div>
