@@ -30,7 +30,7 @@ namespace SociableWebApp.Data
                 {
                     AppUserID = item.id,
                     Email = item.email,
-                    Password = item.password,
+                    Password = "password",
                     Name = item.name,
                     PhoneNumber = item.phone,
                     City = item.city,
