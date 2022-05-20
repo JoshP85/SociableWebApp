@@ -1,105 +1,186 @@
-﻿@model SociableWebApp.Models.AppUser
+﻿@model SociableWebApp.ViewModels.PublicProfileViewModel
 
 @{
-    ViewData["Title"] = "Profile";
-    var friends = ViewBag.Friends;
+    ViewData["Title"] = @Model.OwnerOfProfile.Name;
 }
-<div class="container card border-0 shadow rounded-3 mt-5">
-    <h1>Profile</h1>
-
+<div class="container profile-view card border-0 shadow rounded-3 mt-5">
     <div>
-        <h4>@Model.Name</h4>
-        <hr />
-        <dl class="row">
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.AppUserID)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.AppUserID)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Email)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Email)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Password)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Password)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Name)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Name)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.PhoneNumber)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.PhoneNumber)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.City)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.City)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Country)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Country)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.AccCreatedDate)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.AccCreatedDate)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.AccUpdatedDate)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.AccUpdatedDate)
-            </dd>
-            <dd class="col-sm-10">
-            </dd>
-        </dl>
+        <a asp-controller="NewsFeed" asp-action="Newsfeed">Newsfeed</a>
     </div>
-    @foreach (var friend in friends)
+    <div class="text-center mt-4">
+
+        <img src="@Url.Content("https://userprofileimgs3655612.s3.ap-southeast-2.amazonaws.com/" + @Model.OwnerOfProfile.AppUserID)" class="border border-3 rounded-circle rounded mx-auto d-block" style="height:250px; width:auto" alt="Image" />
+        <h4 class="fs-1">@Model.OwnerOfProfile.Name</h4>
+        <p class="fs-5">@Model.OwnerOfProfile.City, @Model.OwnerOfProfile.Country</p>
+
+    </div>
+    @if (Model.IsOwnerAFriend || Model.IsOwnerCurrentSessionUser)
     {
-        <div class="row">
-            <div class="container">
-                <div class="row justify-content-between mt-2">
-                    <div class=col-8>
-                        <div class="row justify-content-start">
-                            <div class="col-3 p-0">
-                                <img src="@Url.Content("https://userprofileimgs3655612.s3.ap-southeast-2.amazonaws.com/" + @friend.AppUserID)" alt="Image" style="width: 60px; height: 60px;" />
-                            </div>
-                            <div class="col-9 p-0">
-                                <form asp-controller="AppUser" asp-action="PublicProfile">
-                                    <input type="hidden" name="appUserID" value="@friend.AppUserID" class="form-control" />
-                                    <input type="submit" class="no-button-style fw-bold" value="@friend.Name;" />
-                                    <p>@friend.City, @friend.Country</p>
+        <div class="text-center">
+            <p class="fs-5">@Model.OwnerOfProfile.Email</p>
+            <p class="fs-5">@Model.OwnerOfProfile.PhoneNumber</p>
+            @if (Model.IsOwnerAFriend)
+            {
+                <div>
+                    <form asp-controller="AppUser" asp-action="Unfriend">
+                        <input type="hidden" name="removeFriendID" value="@Model.OwnerOfProfile.AppUserID" class="form-control" />
+                        <button type="submit" class="btn btn-secondary fw-bold">Unfriend</button>
+                    </form>
+                </div>
+
+            }
+        </div>
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="post-tab" data-bs-toggle="tab" data-bs-target="#posts" type="button" role="tab" aria-controls="posts" aria-selected="true">Posts</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="friends-tab" data-bs-toggle="tab" data-bs-target="#friends" type="button" role="tab" aria-controls="friends" aria-selected="false">Friends</button>
+            </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="posts" role="tabpanel" aria-labelledby="home-tab">
+                @foreach (var post in Model.OwnerOfProfilePosts)
+                {
+                    <div class="col vw-90 mb-3 rounded-corners post-area">
+                        <div class="d-flex flex-row m-2">
+                            <img src="@Url.Content("https://userprofileimgs3655612.s3.ap-southeast-2.amazonaws.com/" + @post.PostAuthorID)" class="img-fluid rounded-circle border border-1" alt="Image" style="width: auto; height: 60px;" />
+                            <div class="ms-4 mt-1 ">
+                                <form asp-controller="AppUser" asp-action="Profile">
+                                    <input type="hidden" name="appUserID" value="@post.PostAuthorID" class="form-control" />
+                                    <input type="submit" class="no-button-style fw-bold fs-4" value="@post.PostAuthorName" />
+                                    <div class="fs-6 fw-lighter lh-1">
+                                        @post.TimeSincePost
+                                    </div>
+                                    <div class="mt-1 fs-5">
+                                        @post.PostContent
+                                    </div>
+                                    <div>
+                                        @if (post.PostHasImage)
+                                        {
+                                            <img src="@Url.Content("https://postimages3655612.s3.ap-southeast-2.amazonaws.com/" + @post.PostID)" class=" border border-1" style="height:auto; width:100%;" alt="Image" />
+                                        }
+                                    </div>
+                                    <div class="fs-6 mt-3">
+                                        <a data-bs-toggle="collapse" href="#b\\@post.PostID" role="button" aria-expanded="false" aria-controls="b\@post.PostID" style="text-decoration:none">
+                                            Comments(@post.Comments.Count)
+                                        </a>
+                                    </div>
                                 </form>
                             </div>
                         </div>
+
+                        <div class="collapse" id="b\@post.PostID">
+
+                            @foreach (var comment in post.Comments)
+                            {
+                                <div class="col-10 offset-2 mt-3">
+                                    <div class="d-flex flex-row m-2 ms-0 ">
+                                        <img src="@Url.Content("https://userprofileimgs3655612.s3.ap-southeast-2.amazonaws.com/" + @comment.CommentAuthorID)" class="img-fluid rounded-circle border border-1" alt="Image" style="width: 45px; height: 45px;" />
+                                        <div class="ms-2 w-100 rounded-corners comment-area">
+                                            <div class="ms-4 mt-2 mb-2">
+                                                <form asp-controller="AppUser" asp-action="Profile">
+                                                    <div class="fw-lighter lh-1">
+                                                        <input type="hidden" name="appUserID" value="@comment.CommentAuthorID" class="form-control" />
+                                                        <input type="submit" class="no-button-style fw-bold" value="@comment.CommentAuthorName" />
+                                                        @comment.TimeSinceComment
+                                                    </div>
+                                                    <div class="mt-2 fs-6">
+                                                        @comment.CommentContent
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                            <form asp-controller="NewsFeed" asp-action="NewComment">
+                                <div class="container">
+
+                                    <div class="form-group row justify-content-start ms-4">
+                                        <div class="col-8 offset-2">
+                                            <textarea id="txtarea" style="outline: none;" name="commentContent" rows="1" placeholder="Reply to @post.PostAuthorName" class="form-control"></textarea>
+                                            <input type="hidden" name="postID" value="@post.PostID" class="form-control" />
+                                        </div>
+                                        <div class="col-2 p-0 mb-3">
+                                            <input type="submit" value="Reply" class="btn btn-primary fw-bold" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                    <div class="col-4 ps-4 pe-0 mt-1">
-                        <form asp-controller="AppUser" asp-action="Unfriend">
-                            <input type="hidden" name="removeFriendID" value="@friend.AppUserID" class="form-control" />
-                            <button type="submit" class="btn btn-secondary fw-bold">Unfriend</button>
-                        </form>
-                    </div>
+                }
+            </div>
+            <div class="tab-pane fade" id="friends" role="tabpanel" aria-labelledby="friends-tab">
+                <div class="rounded-corners post-area">
+                    @foreach (var friend in @Model.OwnerOfProfileFriends)
+                    {
+                        <div class="row">
+                            <div class="container">
+                                <div class="mt-2">
+                                    <div class="d-flex flex-row m-2">
+
+                                        <div class="p-0">
+                                            <img src="@Url.Content("https://userprofileimgs3655612.s3.ap-southeast-2.amazonaws.com/" + @friend.AppUserID)" class="img-fluid rounded-circle border border-1" alt="Image" style="width: auto; height: 80px;" />
+                                        </div>
+                                        <div class="col-5 ms-4 p-0 fs-5">
+                                            <form asp-controller="AppUser" asp-action="Profile">
+                                                <input type="hidden" name="appUserID" value="@friend.AppUserID" class="form-control" />
+                                                <input type="submit" class="no-button-style fw-bold" value="@friend.Name" />
+                                                <p>@friend.City, @friend.Country</p>
+                                            </form>
+                                        </div>
+
+
+                                        @if (Model.IsOwnerCurrentSessionUser)
+                                        {
+                                            <div class="col-2 ps-4 pe-0 offset-0 offset-sm-0 offset-md-1 mt-2">
+                                                <form asp-controller="AppUser" asp-action="Unfriend">
+                                                    <input type="hidden" name="removeFriendID" value="@friend.AppUserID" class="form-control" />
+                                                    <button type="submit" class="btn btn-secondary fw-bold">Unfriend</button>
+                                                </form>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
     }
-    <div>
-        @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
-        <a asp-controller="NewsFeed" asp-action="Newsfeed">Back to List</a>
-    </div>
+    @if (!Model.IsOwnerAFriend && !Model.IsOwnerCurrentSessionUser && !Model.IsRelationshipPending && !Model.IsRelationshipNotConfirmed)
+    {
+        <div class="text-center">
+            <form asp-controller="AppUser" asp-action="SendFriendRequest">
+                <input type="hidden" asp-for="@Model.OwnerOfProfile.AppUserID" name="receiverID" class="form-control" />
+                <b><input type="submit" class="btn btn-primary fw-bold" value="Add Friend" /></b>
+            </form>
+        </div>
+    }
+
+    @if (Model.IsRelationshipPending)
+    {
+        <div class="text-center">
+            <form asp-controller="AppUser" asp-action="RemovePendingRequest">
+                <input type="hidden" name="receiverID" value="@Model.OwnerOfProfile.AppUserID" class="form-control" />
+                <input type="hidden" name="fromProfile" value="true" class="form-control" />
+                <b><input type="submit" class="btn btn-secondary fw-bold" value="Cancel Request" /></b>
+            </form>
+        </div>
+    }
+    @if (Model.IsRelationshipNotConfirmed)
+    {
+        <div class="text-center">
+            <form asp-controller="AppUser" asp-action="ConfirmFriendRequest">
+                <input type="hidden" name="senderID" value="@Model.OwnerOfProfile.AppUserID" class="form-control" />
+                <input type="hidden" name="fromProfile" value="true" class="form-control" />
+                <button type="submit" name="accept" value="true" class="btn btn-primary fw-bold">Confirm</button>
+                <button type="submit" name="accept" value="false" class="btn-close"></button>
+            </form>
+        </div>
+    }
 </div>

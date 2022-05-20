@@ -10,5 +10,7 @@ namespace SociableWebApp.ViewModels
         public bool IsRelationshipPending { get; set; }
         public bool IsOwnerCurrentSessionUser { get; set; }
         public bool IsRelationshipNotConfirmed { get; set; }
+        public List<AppUser> OwnerOfProfileFriends { get; set; }
+        public List<Post> OwnerOfProfilePosts { get; set; }
     }
 }

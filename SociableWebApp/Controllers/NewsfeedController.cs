@@ -2,7 +2,6 @@
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.S3;
 using Microsoft.AspNetCore.Mvc;
-using SociableWebApp.ExtensionMethods;
 using SociableWebApp.Models;
 using SociableWebApp.Session;
 using SociableWebApp.ViewModels;
@@ -27,27 +26,11 @@ namespace SociableWebApp.Controllers
 
         public async Task<ActionResult> NewsFeedAsync()
         {
-            var postList = new List<Post>();
             var conditions = new List<ScanCondition>();
-
             //TODO: Condition to be only friends posts are returned
             var posts = await dynamoDBContext.ScanAsync<Post>(conditions).GetRemainingAsync();
 
-            posts.Sort((x, y) => -x.PostDate.ConvertStringToDateTime().CompareTo(y.PostDate.ConvertStringToDateTime()));
-
-            foreach (var post in posts)
-            {
-                post.TimeSincePost = post.PostDate.GetTimeSince(DateTime.UtcNow);
-
-                foreach (var comment in post.Comments)
-                {
-                    comment.TimeSinceComment = comment.CommentDate.GetTimeSince(DateTime.UtcNow);
-
-                }
-                post.Comments.Sort((x, y) => x.CommentDate.ConvertStringToDateTime().CompareTo(y.CommentDate.ConvertStringToDateTime()));
-
-                postList.Add(post);
-            }
+            var postList = Post.SortAndDatePosts(posts);
 
             NewsFeedViewModel newsfeedVM = new NewsFeedViewModel()
             {

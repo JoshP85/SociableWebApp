@@ -1,6 +1,7 @@
 ﻿using Amazon.DynamoDBv2.DataModel;
 using Amazon.S3;
 using Amazon.S3.Model;
+using SociableWebApp.ExtensionMethods;
 
 namespace SociableWebApp.Models
 {
@@ -96,6 +97,29 @@ namespace SociableWebApp.Models
                 };
                 PutObjectResponse response = await clientS3.PutObjectAsync(request);
             }
+        }
+
+        public static List<Post> SortAndDatePosts(List<Post> posts)
+        {
+            var postList = new List<Post>();
+
+            posts.Sort((x, y) => -x.PostDate.ConvertStringToDateTime().CompareTo(y.PostDate.ConvertStringToDateTime()));
+
+            foreach (var post in posts)
+            {
+                post.TimeSincePost = post.PostDate.GetTimeSince(DateTime.UtcNow);
+
+                foreach (var comment in post.Comments)
+                {
+                    comment.TimeSinceComment = comment.CommentDate.GetTimeSince(DateTime.UtcNow);
+
+                }
+                post.Comments.Sort((x, y) => x.CommentDate.ConvertStringToDateTime().CompareTo(y.CommentDate.ConvertStringToDateTime()));
+
+                postList.Add(post);
+            }
+
+            return postList;
         }
     }
 }
