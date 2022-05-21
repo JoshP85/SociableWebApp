@@ -19,6 +19,7 @@ builder.Services.AddSession(options =>
 var credentials = new BasicAWSCredentials(
     File.ReadAllText(@"access-key.txt"), File.ReadAllText(@"private-key.txt"));
 
+
 var config = new AmazonDynamoDBConfig()
 {
     RegionEndpoint = RegionEndpoint.APSoutheast2

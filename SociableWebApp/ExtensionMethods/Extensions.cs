@@ -2,9 +2,9 @@
 {
     public static class Extensions
     {
-        public static string GetTimeSince(this string datetime, DateTime dateTime)
+        public static string GetTimeSince(this DateTime datetime, DateTime dateTime)
         {
-            TimeSpan timeDiff = dateTime - datetime.ConvertStringToDateTime();
+            TimeSpan timeDiff = dateTime - datetime;
 
             if (timeDiff.TotalDays >= 1) return $"{timeDiff.TotalDays:F0}d";
 
@@ -16,8 +16,5 @@
 
             return "Just now";
         }
-
-        public static DateTime ConvertStringToDateTime(this string dateTime) => DateTime.Parse(dateTime);
-
     }
 }

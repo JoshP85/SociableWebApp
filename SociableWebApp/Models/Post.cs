@@ -11,7 +11,7 @@ namespace SociableWebApp.Models
         public Post()
         {
             PostID = Guid.NewGuid().ToString();
-            PostDate = DateTime.UtcNow.ToString();
+            PostDate = DateTime.UtcNow;
             Comments = new List<Comment>();
             VoteTotal = 0;
             VoteUp = 0;
@@ -31,7 +31,7 @@ namespace SociableWebApp.Models
         public string PostContent { get; set; }
 
         [DynamoDBProperty]
-        public string PostDate { get; set; }
+        public DateTime PostDate { get; set; }
 
         [DynamoDBIgnore]
         public string TimeSincePost { get; set; }
@@ -103,7 +103,7 @@ namespace SociableWebApp.Models
         {
             var postList = new List<Post>();
 
-            posts.Sort((x, y) => -x.PostDate.ConvertStringToDateTime().CompareTo(y.PostDate.ConvertStringToDateTime()));
+            posts.Sort((x, y) => -x.PostDate.CompareTo(y.PostDate));
 
             foreach (var post in posts)
             {
@@ -114,7 +114,7 @@ namespace SociableWebApp.Models
                     comment.TimeSinceComment = comment.CommentDate.GetTimeSince(DateTime.UtcNow);
 
                 }
-                post.Comments.Sort((x, y) => x.CommentDate.ConvertStringToDateTime().CompareTo(y.CommentDate.ConvertStringToDateTime()));
+                post.Comments.Sort((x, y) => x.CommentDate.CompareTo(y.CommentDate));
 
                 postList.Add(post);
             }

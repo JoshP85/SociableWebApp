@@ -7,7 +7,7 @@ namespace SociableWebApp.Models
         public Comment()
         {
             CommentID = Guid.NewGuid().ToString();
-            CommentDate = DateTime.UtcNow.ToString();
+            CommentDate = DateTime.UtcNow;
         }
 
         [DynamoDBHashKey]
@@ -23,7 +23,7 @@ namespace SociableWebApp.Models
         public string CommentContent { get; set; }
 
         [DynamoDBProperty]
-        public string CommentDate { get; set; }
+        public DateTime CommentDate { get; set; }
 
         [DynamoDBIgnore]
         public string TimeSinceComment { get; set; }
