@@ -30,6 +30,10 @@ p, a{
     color:black;
     text-decoration: none;
 }
+
+.a-blue {
+    color: blue;
+}
 .heading {
     font-family: 'Oleo Script Swash Caps', cursive;
     font-size: 110px;
