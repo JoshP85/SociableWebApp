@@ -30,12 +30,12 @@
                     <div class="w-75 m-auto">
                         <div class="d-grid mt-4">
                             <button class="btn btn-primary text-uppercase fw-bold" id="button" type="submit" asp-controller="Home" asp-action="Index">Sign in</button>
-                            <a class="text-center mt-1" style="text-decoration:none">Forgotten password?</a>
+                            <a class="text-center mt-1" asp-action="ForgotPassword" asp-controller="Home" style="text-decoration:none">Forgotten password?</a>
                         </div>
                     </div>
                     <hr />
                     <div class="text-center">
-                        <p>Don't have an account? <b><a class="text-center mt-1" asp-controller="Home" asp-action="Register" style="text-decoration:none">Sign up</a></b></p>
+                        <p>Don't have an account? <b><a class="text-center mt-1 a-blue" asp-controller="Home" asp-action="Register" style="text-decoration:none">Sign up</a></b></p>
                     </div>
                 </form>
             </div>

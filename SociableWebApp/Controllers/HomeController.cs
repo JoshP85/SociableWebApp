@@ -88,6 +88,63 @@ namespace SociableWebApp.Controllers
             return View();
         }
 
+
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ForgotPasswordAsync(string email)
+        {
+            if (email is not null)
+            {
+                var request = new ScanRequest
+                {
+                    TableName = "AppUsers",
+                    ExpressionAttributeValues = new Dictionary<string, AttributeValue> {
+                    {":val", new AttributeValue { S = email }}
+                },
+                    FilterExpression = "Email = :val",
+                };
+                ScanResponse response = await client.ScanAsync(request);
+
+                if (response.Count > 0)
+                {
+                    string userID = "";
+                    foreach (Dictionary<string, AttributeValue> item in response.Items)
+                    {
+                        userID = item["AppUserID"].S.ToString();
+                    }
+
+                    AppUser user = AppUser.GetAppUser(dynamoDBContext, userID);
+
+                    var resetpasswordmessage = new ResetPasswordMessage
+                    {
+                        AppuserID = userID,
+                        Email = user.Email,
+                        Name = user.Name,
+                        Code = "1234"
+                    };
+                    await dynamoDBContext.SaveAsync(resetpasswordmessage);
+                    return RedirectToAction("EnterResetCode", "Home");
+                }
+
+            }
+            ModelState.AddModelError("InvalidEmail", "Email does not exist in our system.");
+            return View();
+        }
+
+        public IActionResult EnterResetCode()
+        {
+            return View();
+        }
+
+        public IActionResult ResetPassword()
+        {
+            return View();
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
